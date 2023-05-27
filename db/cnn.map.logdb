@@ -1,0 +1,6 @@
+v1
+DSP_BALANCING_IMPLEMENTATION,DSP_BLOCKS,ov7725_rgb565_lcd:U0|cmos_data_top:u_cmos_data_top|cmos_tailor:u_cmos_tailor|lpm_mult:Mult0|mult_sct:auto_generated|mac_out2,
+DSP_BALANCING_IMPLEMENTATION,DSP_BLOCKS,cnn:U2|rd_data:U0|rd_control:U1|maxpool_ctrl:U3|lpm_mult:Mult2|mult_v2t:auto_generated|mac_out2,
+DSP_BALANCING_IMPLEMENTATION,DSP_BLOCKS,cnn:U2|rd_data:U0|rd_control:U1|conv_ctrl:U1|lpm_mult:Mult0|mult_v2t:auto_generated|mac_out2,
+DSP_BALANCING_IMPLEMENTATION,DSP_BLOCKS,cnn:U2|rd_data:U0|rd_control:U1|maxpool_ctrl:U3|lpm_mult:Mult1|mult_v2t:auto_generated|mac_out2,
+DSP_BALANCING_IMPLEMENTATION,DSP_BLOCKS,cnn:U2|rd_data:U0|rd_control:U1|maxpool_ctrl:U3|lpm_mult:Mult0|mult_v2t:auto_generated|mac_out2,

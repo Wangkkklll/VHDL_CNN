@@ -1,0 +1,104 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dC:/Users/Wang Kang Li/Desktop/model/cnn/simulation/modelsim
+Eram_pixel_vhd_tst
+Z1 w1675156133
+Z2 DPx4 ieee 16 std_logic_signed 0 22 C<aanc0R`<LWPSe[JYRP^3
+Z3 DPx4 ieee 15 std_logic_arith 0 22 [G314=:2zXJ`VORJe1J@Z1
+Z4 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z5 DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
+R0
+Z6 8C:/Users/Wang Kang Li/Desktop/model/cnn/simulation/modelsim/ram_pixel.vht
+Z7 FC:/Users/Wang Kang Li/Desktop/model/cnn/simulation/modelsim/ram_pixel.vht
+l0
+L32
+VKFQIBa[aoB[BKAB??SBY31
+!s100 fdlgn^eZ>E46IgCa]blNE1
+Z8 OV;C;10.5b;63
+31
+Z9 !s110 1676209913
+!i10b 1
+Z10 !s108 1676209913.000000
+Z11 !s90 -reportprogress|300|-93|-work|work|C:/Users/Wang Kang Li/Desktop/model/cnn/simulation/modelsim/ram_pixel.vht|
+Z12 !s107 C:/Users/Wang Kang Li/Desktop/model/cnn/simulation/modelsim/ram_pixel.vht|
+!i113 1
+Z13 o-93 -work work
+Z14 tExplicit 1 CvgOpt 0
+Aram_pixel_arch
+R2
+R3
+R4
+R5
+DEx4 work 17 ram_pixel_vhd_tst 0 22 KFQIBa[aoB[BKAB??SBY31
+l97
+L34
+VnJ8]3ih;dC]=LH<ZHDEg=3
+!s100 EQeWFoeHgIWX^T1E2ofNg2
+R8
+31
+R9
+!i10b 1
+R10
+R11
+R12
+!i113 1
+R13
+R14
+Etop
+Z15 w1676207532
+Z16 DPx10 cycloneive 20 cycloneive_atom_pack 0 22 U]E`hi0:`oKa5cWiFZ>hl3
+Z17 DPx10 cycloneive 21 cycloneive_components 0 22 7:=`d=[QUY_aUcbj<lC000
+Z18 DPx4 ieee 16 vital_primitives 0 22 G>kiXP8Q9dRClKfK1Zn7j1
+Z19 DPx6 altera 11 dffeas_pack 0 22 Dg`GWTC`^Q8GNSMPeo22;3
+Z20 DPx4 ieee 12 vital_timing 0 22 J>EBealN09f8GzldA[z2>3
+R4
+R5
+Z21 DPx6 altera 28 altera_primitives_components 0 22 _LNC5n6B?5VN@W;M4Dg@k1
+R0
+Z22 8cnn_8_1200mv_85c_slow.vho
+Z23 Fcnn_8_1200mv_85c_slow.vho
+l0
+L36
+VdN5VT1KbB33U5UVFD?=<32
+!s100 4Ik9><c@=0z[Sfi4^`XDo2
+R8
+31
+!s110 1676209907
+!i10b 1
+Z24 !s108 1676209907.000000
+Z25 !s90 -reportprogress|300|-93|-work|work|cnn_8_1200mv_85c_slow.vho|
+Z26 !s107 cnn_8_1200mv_85c_slow.vho|
+!i113 1
+R13
+R14
+Astructure
+R16
+R17
+R18
+R19
+R20
+R4
+R5
+R21
+DEx4 work 3 top 0 22 dN5VT1KbB33U5UVFD?=<32
+l48188
+L165
+VU0EaS5IR`XR_HVI4ahTK`2
+!s100 AhaJ<1CR`JMH@`Da_hPN`2
+R8
+31
+!s110 1676209909
+!i10b 1
+R24
+R25
+R26
+!i113 1
+R13
+R14

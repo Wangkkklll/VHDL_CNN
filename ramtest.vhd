@@ -1,0 +1,54 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_arith.all;
+use ieee.std_logic_signed.all;
+
+
+entity ramtest is
+	port(
+	clk:in std_logic;
+	rst_n:in std_logic;
+	data:out std_logic_vector(7 downto 0)
+	);
+end entity;
+
+
+architecture behav of ramtest is
+
+component ram_input IS
+	PORT
+	(
+		clock		: IN STD_LOGIC  := '1';
+		data		: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+		rdaddress		: IN STD_LOGIC_VECTOR (9 DOWNTO 0);
+		rden		: IN STD_LOGIC  := '1';
+		wraddress		: IN STD_LOGIC_VECTOR (9 DOWNTO 0);
+		wren		: IN STD_LOGIC  := '0';
+		q		: OUT STD_LOGIC_VECTOR (7 DOWNTO 0)
+	);
+END component;
+
+component read_mem is
+	port(
+		clk:in std_logic;
+		rst_n:in std_logic;
+		qq:out std_logic_vector(9 downto 0);
+		ren:out std_logic
+	);
+	
+end component;
+
+signal wraddress: std_logic_vector(9 downto 0);
+signal wren:std_logic;
+signal d:std_logic_vector(7 downto 0);
+signal rden:std_logic;
+signal rdaddress:std_logic_vector(9 downto 0);
+
+begin
+
+u0:read_mem port map(clk,rst_n,rdaddress,rden);
+
+u1:ram_input port map(clk,d,rdaddress,rden,wraddress,wren,data);
+
+
+end behav;

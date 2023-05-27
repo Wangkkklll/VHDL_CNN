@@ -1,0 +1,557 @@
+------------------------------------------------------------
+Timing Analyzer Summary
+------------------------------------------------------------
+
+Type  : Slow 1200mV 85C Model Setup 'cnn:U2|rd_data:U0|full_connect:U5|multi:u0|data_out[0]'
+Slack : -17.543
+TNS   : -35.008
+
+Type  : Slow 1200mV 85C Model Setup 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|finish'
+Slack : -16.611
+TNS   : -1527.479
+
+Type  : Slow 1200mV 85C Model Setup 'U0|u_pll_clk|altpll_component|auto_generated|pll1|clk[0]'
+Slack : -12.569
+TNS   : -387.789
+
+Type  : Slow 1200mV 85C Model Setup 'cnn:U2|rd_data:U0|conv_maxpool:U3|read_data_sipo:U0|p_pre_ready'
+Slack : -12.328
+TNS   : -496.695
+
+Type  : Slow 1200mV 85C Model Setup 'cnn:U2|top_control:U1|layer[0]'
+Slack : -12.166
+TNS   : -310.820
+
+Type  : Slow 1200mV 85C Model Setup 'cnn:U2|rd_data:U0|conv_maxpool:U3|Parallel_Conv:U1|ok2'
+Slack : -10.407
+TNS   : -5934.722
+
+Type  : Slow 1200mV 85C Model Setup 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|cnt[0]'
+Slack : -9.772
+TNS   : -918.073
+
+Type  : Slow 1200mV 85C Model Setup 'cnn:U2|rd_data:U0|conv_maxpool:U3|ftoe:U3|ready2'
+Slack : -9.648
+TNS   : -298.371
+
+Type  : Slow 1200mV 85C Model Setup 'sys_clk'
+Slack : -9.408
+TNS   : -2428.537
+
+Type  : Slow 1200mV 85C Model Setup 'cam_pclk'
+Slack : -7.321
+TNS   : -286.046
+
+Type  : Slow 1200mV 85C Model Setup 'cnn:U2|rd_data:U0|conv_maxpool:U3|Parallel_Conv:U1|ok1'
+Slack : -7.163
+TNS   : -88.178
+
+Type  : Slow 1200mV 85C Model Setup 'ov7725_rgb565_lcd:U0|i2c_dri:u_i2c_dri|dri_clk'
+Slack : -3.805
+TNS   : -184.152
+
+Type  : Slow 1200mV 85C Model Setup 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|co'
+Slack : -1.885
+TNS   : -105.388
+
+Type  : Slow 1200mV 85C Model Setup 'U0|u_pll_clk|altpll_component|auto_generated|pll1|clk[2]'
+Slack : -0.136
+TNS   : -0.136
+
+Type  : Slow 1200mV 85C Model Hold 'cnn:U2|top_control:U1|layer[0]'
+Slack : -2.761
+TNS   : -2.761
+
+Type  : Slow 1200mV 85C Model Hold 'cnn:U2|rd_data:U0|conv_maxpool:U3|ftoe:U3|ready2'
+Slack : -1.375
+TNS   : -1.375
+
+Type  : Slow 1200mV 85C Model Hold 'cnn:U2|rd_data:U0|conv_maxpool:U3|Parallel_Conv:U1|ok2'
+Slack : -1.136
+TNS   : -1.136
+
+Type  : Slow 1200mV 85C Model Hold 'U0|u_pll_clk|altpll_component|auto_generated|pll1|clk[2]'
+Slack : -0.858
+TNS   : -2.400
+
+Type  : Slow 1200mV 85C Model Hold 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|co'
+Slack : -0.094
+TNS   : -0.135
+
+Type  : Slow 1200mV 85C Model Hold 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|cnt[0]'
+Slack : 0.163
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'U0|u_pll_clk|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 0.371
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'sys_clk'
+Slack : 0.435
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'ov7725_rgb565_lcd:U0|i2c_dri:u_i2c_dri|dri_clk'
+Slack : 0.452
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'cam_pclk'
+Slack : 0.467
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'cnn:U2|rd_data:U0|full_connect:U5|multi:u0|data_out[0]'
+Slack : 0.647
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'cnn:U2|rd_data:U0|conv_maxpool:U3|read_data_sipo:U0|p_pre_ready'
+Slack : 2.196
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|finish'
+Slack : 3.640
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'cnn:U2|rd_data:U0|conv_maxpool:U3|Parallel_Conv:U1|ok1'
+Slack : 4.081
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Recovery 'cam_pclk'
+Slack : -4.391
+TNS   : -192.637
+
+Type  : Slow 1200mV 85C Model Recovery 'U0|u_pll_clk|altpll_component|auto_generated|pll1|clk[2]'
+Slack : -2.271
+TNS   : -78.570
+
+Type  : Slow 1200mV 85C Model Removal 'U0|u_pll_clk|altpll_component|auto_generated|pll1|clk[2]'
+Slack : -0.749
+TNS   : -25.140
+
+Type  : Slow 1200mV 85C Model Removal 'cam_pclk'
+Slack : 2.136
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'cnn:U2|rd_data:U0|full_connect:U5|multi:u0|data_out[0]'
+Slack : -5.739
+TNS   : -1688.647
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'cam_pclk'
+Slack : -4.000
+TNS   : -212.497
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'cnn:U2|top_control:U1|layer[0]'
+Slack : -2.032
+TNS   : -56.041
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'cnn:U2|rd_data:U0|conv_maxpool:U3|Parallel_Conv:U1|ok2'
+Slack : -1.487
+TNS   : -2400.754
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|co'
+Slack : -1.487
+TNS   : -190.336
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|finish'
+Slack : -1.487
+TNS   : -178.440
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'ov7725_rgb565_lcd:U0|i2c_dri:u_i2c_dri|dri_clk'
+Slack : -1.487
+TNS   : -101.116
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'cnn:U2|rd_data:U0|conv_maxpool:U3|read_data_sipo:U0|p_pre_ready'
+Slack : -1.487
+TNS   : -71.376
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'cnn:U2|rd_data:U0|conv_maxpool:U3|ftoe:U3|ready2'
+Slack : -1.487
+TNS   : -65.467
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'cnn:U2|rd_data:U0|conv_maxpool:U3|Parallel_Conv:U1|ok1'
+Slack : -1.487
+TNS   : -20.818
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|cnt[0]'
+Slack : 0.314
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'U0|u_pll_clk|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 4.704
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'U0|u_pll_clk|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 7.441
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'sys_clk'
+Slack : 9.517
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Setup 'cnn:U2|rd_data:U0|full_connect:U5|multi:u0|data_out[0]'
+Slack : -16.749
+TNS   : -33.342
+
+Type  : Slow 1200mV 0C Model Setup 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|finish'
+Slack : -15.027
+TNS   : -1408.265
+
+Type  : Slow 1200mV 0C Model Setup 'cnn:U2|top_control:U1|layer[0]'
+Slack : -11.570
+TNS   : -297.421
+
+Type  : Slow 1200mV 0C Model Setup 'U0|u_pll_clk|altpll_component|auto_generated|pll1|clk[0]'
+Slack : -11.445
+TNS   : -351.734
+
+Type  : Slow 1200mV 0C Model Setup 'cnn:U2|rd_data:U0|conv_maxpool:U3|read_data_sipo:U0|p_pre_ready'
+Slack : -11.315
+TNS   : -453.652
+
+Type  : Slow 1200mV 0C Model Setup 'cnn:U2|rd_data:U0|conv_maxpool:U3|Parallel_Conv:U1|ok2'
+Slack : -9.923
+TNS   : -5472.676
+
+Type  : Slow 1200mV 0C Model Setup 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|cnt[0]'
+Slack : -9.326
+TNS   : -862.269
+
+Type  : Slow 1200mV 0C Model Setup 'cnn:U2|rd_data:U0|conv_maxpool:U3|ftoe:U3|ready2'
+Slack : -9.167
+TNS   : -280.780
+
+Type  : Slow 1200mV 0C Model Setup 'sys_clk'
+Slack : -8.670
+TNS   : -2212.417
+
+Type  : Slow 1200mV 0C Model Setup 'cam_pclk'
+Slack : -6.980
+TNS   : -264.446
+
+Type  : Slow 1200mV 0C Model Setup 'cnn:U2|rd_data:U0|conv_maxpool:U3|Parallel_Conv:U1|ok1'
+Slack : -6.584
+TNS   : -80.826
+
+Type  : Slow 1200mV 0C Model Setup 'ov7725_rgb565_lcd:U0|i2c_dri:u_i2c_dri|dri_clk'
+Slack : -3.531
+TNS   : -167.167
+
+Type  : Slow 1200mV 0C Model Setup 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|co'
+Slack : -1.823
+TNS   : -96.439
+
+Type  : Slow 1200mV 0C Model Setup 'U0|u_pll_clk|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 0.059
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'cnn:U2|top_control:U1|layer[0]'
+Slack : -2.608
+TNS   : -2.608
+
+Type  : Slow 1200mV 0C Model Hold 'cnn:U2|rd_data:U0|conv_maxpool:U3|ftoe:U3|ready2'
+Slack : -1.291
+TNS   : -1.291
+
+Type  : Slow 1200mV 0C Model Hold 'U0|u_pll_clk|altpll_component|auto_generated|pll1|clk[2]'
+Slack : -1.151
+TNS   : -6.239
+
+Type  : Slow 1200mV 0C Model Hold 'cnn:U2|rd_data:U0|conv_maxpool:U3|Parallel_Conv:U1|ok2'
+Slack : -1.061
+TNS   : -1.061
+
+Type  : Slow 1200mV 0C Model Hold 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|co'
+Slack : -0.182
+TNS   : -0.488
+
+Type  : Slow 1200mV 0C Model Hold 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|cnt[0]'
+Slack : 0.234
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'U0|u_pll_clk|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 0.349
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'sys_clk'
+Slack : 0.385
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'ov7725_rgb565_lcd:U0|i2c_dri:u_i2c_dri|dri_clk'
+Slack : 0.401
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'cam_pclk'
+Slack : 0.424
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'cnn:U2|rd_data:U0|full_connect:U5|multi:u0|data_out[0]'
+Slack : 0.551
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'cnn:U2|rd_data:U0|conv_maxpool:U3|read_data_sipo:U0|p_pre_ready'
+Slack : 1.972
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|finish'
+Slack : 3.284
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'cnn:U2|rd_data:U0|conv_maxpool:U3|Parallel_Conv:U1|ok1'
+Slack : 3.646
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Recovery 'cam_pclk'
+Slack : -4.095
+TNS   : -181.873
+
+Type  : Slow 1200mV 0C Model Recovery 'U0|u_pll_clk|altpll_component|auto_generated|pll1|clk[2]'
+Slack : -1.871
+TNS   : -63.300
+
+Type  : Slow 1200mV 0C Model Removal 'U0|u_pll_clk|altpll_component|auto_generated|pll1|clk[2]'
+Slack : -1.067
+TNS   : -38.061
+
+Type  : Slow 1200mV 0C Model Removal 'cam_pclk'
+Slack : 1.844
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'cnn:U2|rd_data:U0|full_connect:U5|multi:u0|data_out[0]'
+Slack : -5.482
+TNS   : -1490.214
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'cam_pclk'
+Slack : -4.000
+TNS   : -213.342
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'cnn:U2|top_control:U1|layer[0]'
+Slack : -1.937
+TNS   : -51.215
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'cnn:U2|rd_data:U0|conv_maxpool:U3|Parallel_Conv:U1|ok2'
+Slack : -1.487
+TNS   : -2399.509
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|co'
+Slack : -1.487
+TNS   : -190.336
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|finish'
+Slack : -1.487
+TNS   : -178.440
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'ov7725_rgb565_lcd:U0|i2c_dri:u_i2c_dri|dri_clk'
+Slack : -1.487
+TNS   : -101.116
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'cnn:U2|rd_data:U0|conv_maxpool:U3|read_data_sipo:U0|p_pre_ready'
+Slack : -1.487
+TNS   : -71.376
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'cnn:U2|rd_data:U0|conv_maxpool:U3|ftoe:U3|ready2'
+Slack : -1.487
+TNS   : -66.011
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'cnn:U2|rd_data:U0|conv_maxpool:U3|Parallel_Conv:U1|ok1'
+Slack : -1.487
+TNS   : -20.818
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|cnt[0]'
+Slack : 0.228
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'U0|u_pll_clk|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 4.669
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'U0|u_pll_clk|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 7.321
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'sys_clk'
+Slack : 9.548
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Setup 'cnn:U2|rd_data:U0|full_connect:U5|multi:u0|data_out[0]'
+Slack : -7.479
+TNS   : -14.951
+
+Type  : Fast 1200mV 0C Model Setup 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|finish'
+Slack : -6.534
+TNS   : -601.606
+
+Type  : Fast 1200mV 0C Model Setup 'cnn:U2|top_control:U1|layer[0]'
+Slack : -5.175
+TNS   : -116.876
+
+Type  : Fast 1200mV 0C Model Setup 'U0|u_pll_clk|altpll_component|auto_generated|pll1|clk[0]'
+Slack : -5.073
+TNS   : -156.455
+
+Type  : Fast 1200mV 0C Model Setup 'cnn:U2|rd_data:U0|conv_maxpool:U3|read_data_sipo:U0|p_pre_ready'
+Slack : -4.758
+TNS   : -185.753
+
+Type  : Fast 1200mV 0C Model Setup 'cnn:U2|rd_data:U0|conv_maxpool:U3|Parallel_Conv:U1|ok2'
+Slack : -4.176
+TNS   : -1653.487
+
+Type  : Fast 1200mV 0C Model Setup 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|cnt[0]'
+Slack : -4.086
+TNS   : -361.007
+
+Type  : Fast 1200mV 0C Model Setup 'cnn:U2|rd_data:U0|conv_maxpool:U3|ftoe:U3|ready2'
+Slack : -3.906
+TNS   : -110.648
+
+Type  : Fast 1200mV 0C Model Setup 'sys_clk'
+Slack : -3.721
+TNS   : -966.721
+
+Type  : Fast 1200mV 0C Model Setup 'cam_pclk'
+Slack : -2.972
+TNS   : -68.068
+
+Type  : Fast 1200mV 0C Model Setup 'cnn:U2|rd_data:U0|conv_maxpool:U3|Parallel_Conv:U1|ok1'
+Slack : -2.619
+TNS   : -31.869
+
+Type  : Fast 1200mV 0C Model Setup 'ov7725_rgb565_lcd:U0|i2c_dri:u_i2c_dri|dri_clk'
+Slack : -1.094
+TNS   : -42.163
+
+Type  : Fast 1200mV 0C Model Setup 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|co'
+Slack : -0.475
+TNS   : -16.013
+
+Type  : Fast 1200mV 0C Model Setup 'U0|u_pll_clk|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 0.062
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'cnn:U2|top_control:U1|layer[0]'
+Slack : -0.818
+TNS   : -0.818
+
+Type  : Fast 1200mV 0C Model Hold 'cnn:U2|rd_data:U0|conv_maxpool:U3|ftoe:U3|ready2'
+Slack : -0.231
+TNS   : -0.231
+
+Type  : Fast 1200mV 0C Model Hold 'U0|u_pll_clk|altpll_component|auto_generated|pll1|clk[2]'
+Slack : -0.192
+TNS   : -0.249
+
+Type  : Fast 1200mV 0C Model Hold 'cnn:U2|rd_data:U0|conv_maxpool:U3|Parallel_Conv:U1|ok2'
+Slack : -0.155
+TNS   : -0.155
+
+Type  : Fast 1200mV 0C Model Hold 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|cnt[0]'
+Slack : -0.134
+TNS   : -0.134
+
+Type  : Fast 1200mV 0C Model Hold 'U0|u_pll_clk|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 0.117
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'sys_clk'
+Slack : 0.159
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'ov7725_rgb565_lcd:U0|i2c_dri:u_i2c_dri|dri_clk'
+Slack : 0.186
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'cam_pclk'
+Slack : 0.193
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|co'
+Slack : 0.321
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'cnn:U2|rd_data:U0|full_connect:U5|multi:u0|data_out[0]'
+Slack : 0.591
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'cnn:U2|rd_data:U0|conv_maxpool:U3|read_data_sipo:U0|p_pre_ready'
+Slack : 0.928
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|finish'
+Slack : 1.596
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'cnn:U2|rd_data:U0|conv_maxpool:U3|Parallel_Conv:U1|ok1'
+Slack : 1.780
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Recovery 'cam_pclk'
+Slack : -1.357
+TNS   : -45.942
+
+Type  : Fast 1200mV 0C Model Recovery 'U0|u_pll_clk|altpll_component|auto_generated|pll1|clk[2]'
+Slack : -0.711
+TNS   : -20.681
+
+Type  : Fast 1200mV 0C Model Removal 'U0|u_pll_clk|altpll_component|auto_generated|pll1|clk[2]'
+Slack : -0.079
+TNS   : -1.243
+
+Type  : Fast 1200mV 0C Model Removal 'cam_pclk'
+Slack : 0.763
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'cam_pclk'
+Slack : -3.000
+TNS   : -128.875
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'cnn:U2|rd_data:U0|full_connect:U5|multi:u0|data_out[0]'
+Slack : -2.136
+TNS   : -591.812
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'cnn:U2|rd_data:U0|conv_maxpool:U3|Parallel_Conv:U1|ok2'
+Slack : -1.000
+TNS   : -1611.306
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|co'
+Slack : -1.000
+TNS   : -128.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|finish'
+Slack : -1.000
+TNS   : -120.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'ov7725_rgb565_lcd:U0|i2c_dri:u_i2c_dri|dri_clk'
+Slack : -1.000
+TNS   : -68.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'cnn:U2|rd_data:U0|conv_maxpool:U3|read_data_sipo:U0|p_pre_ready'
+Slack : -1.000
+TNS   : -48.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'cnn:U2|rd_data:U0|conv_maxpool:U3|ftoe:U3|ready2'
+Slack : -1.000
+TNS   : -44.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'cnn:U2|top_control:U1|layer[0]'
+Slack : -1.000
+TNS   : -16.007
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'cnn:U2|rd_data:U0|conv_maxpool:U3|Parallel_Conv:U1|ok1'
+Slack : -1.000
+TNS   : -14.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'cnn:U2|rd_data:U0|full_connect:U5|full_sipo:c1|cnt[0]'
+Slack : 0.274
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'U0|u_pll_clk|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 4.734
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'U0|u_pll_clk|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 8.667
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'sys_clk'
+Slack : 9.370
+TNS   : 0.000
+
+------------------------------------------------------------

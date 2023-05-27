@@ -1,0 +1,92 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dC:/Users/Wang Kang Li/Desktop/model/cnn/simulation/modelsim
+Etop_control
+Z1 w1675136865
+Z2 DPx4 ieee 16 std_logic_signed 0 22 C<aanc0R`<LWPSe[JYRP^3
+Z3 DPx4 ieee 15 std_logic_arith 0 22 [G314=:2zXJ`VORJe1J@Z1
+Z4 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z5 DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
+R0
+Z6 8C:/Users/Wang Kang Li/Desktop/model/cnn/top_control.vhd
+Z7 FC:/Users/Wang Kang Li/Desktop/model/cnn/top_control.vhd
+l0
+L6
+VEAT?6Vka;oZ0mV;4FbSi13
+!s100 QI5N7hb4fl3jmV3[7cYX^0
+Z8 OV;C;10.5b;63
+31
+Z9 !s110 1675137028
+!i10b 1
+Z10 !s108 1675137028.000000
+Z11 !s90 -reportprogress|300|-93|-work|work|C:/Users/Wang Kang Li/Desktop/model/cnn/top_control.vhd|
+Z12 !s107 C:/Users/Wang Kang Li/Desktop/model/cnn/top_control.vhd|
+!i113 1
+Z13 o-93 -work work
+Z14 tExplicit 1 CvgOpt 0
+Abehav
+R2
+R3
+R4
+R5
+DEx4 work 11 top_control 0 22 EAT?6Vka;oZ0mV;4FbSi13
+l33
+L23
+VMQVz:U<f3a[50^Oo?]]Q61
+!s100 og6dSUjek39YJFd[H>2>R3
+R8
+31
+R9
+!i10b 1
+R10
+R11
+R12
+!i113 1
+R13
+R14
+Etop_control_vhd_tst
+Z15 w1675136652
+R4
+R5
+R0
+Z16 8C:/Users/Wang Kang Li/Desktop/model/cnn/simulation/modelsim/top_control.vht
+Z17 FC:/Users/Wang Kang Li/Desktop/model/cnn/simulation/modelsim/top_control.vht
+l0
+L30
+Vo8dXYgD67D`54hdGN]0X@2
+!s100 JAZ4>dIaO@KACUHDbjDBG0
+R8
+31
+R9
+!i10b 1
+R10
+Z18 !s90 -reportprogress|300|-93|-work|work|C:/Users/Wang Kang Li/Desktop/model/cnn/simulation/modelsim/top_control.vht|
+Z19 !s107 C:/Users/Wang Kang Li/Desktop/model/cnn/simulation/modelsim/top_control.vht|
+!i113 1
+R13
+R14
+Atop_control_arch
+R4
+R5
+DEx4 work 19 top_control_vhd_tst 0 22 o8dXYgD67D`54hdGN]0X@2
+l65
+L32
+Vik2;D@zBGBKCM;c0g?D_81
+!s100 0^c^ejIO9M@WP`WGYn4>f2
+R8
+31
+R9
+!i10b 1
+R10
+R18
+R19
+!i113 1
+R13
+R14

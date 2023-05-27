@@ -1,0 +1,313 @@
+{
+	"partitions" : [
+		{
+			"name" : "Top",
+			"pins" : [
+				{
+					"name" : "cam_scl",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_cke",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_cs_n",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_ras_n",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_cas_n",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_we_n",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_ba[0]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_ba[1]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_addr[0]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_addr[1]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_addr[2]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_addr[3]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_addr[4]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_addr[5]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_addr[6]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_addr[7]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_addr[8]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_addr[9]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_addr[10]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_addr[11]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_addr[12]",
+					"strict" : false
+				},
+				{
+					"name" : "lcd_de",
+					"strict" : false
+				},
+				{
+					"name" : "lcd_pclk",
+					"strict" : false
+				},
+				{
+					"name" : "seg_d[0]",
+					"strict" : false
+				},
+				{
+					"name" : "seg_d[1]",
+					"strict" : false
+				},
+				{
+					"name" : "seg_d[2]",
+					"strict" : false
+				},
+				{
+					"name" : "seg_d[3]",
+					"strict" : false
+				},
+				{
+					"name" : "seg_d[4]",
+					"strict" : false
+				},
+				{
+					"name" : "seg_d[5]",
+					"strict" : false
+				},
+				{
+					"name" : "seg_d[6]",
+					"strict" : false
+				},
+				{
+					"name" : "cam_sda",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_data[0]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_data[1]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_data[2]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_data[3]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_data[4]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_data[5]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_data[6]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_data[7]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_data[8]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_data[9]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_data[10]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_data[11]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_data[12]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_data[13]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_data[14]",
+					"strict" : false
+				},
+				{
+					"name" : "sdram_data[15]",
+					"strict" : false
+				},
+				{
+					"name" : "lcd_rgb[0]",
+					"strict" : false
+				},
+				{
+					"name" : "lcd_rgb[1]",
+					"strict" : false
+				},
+				{
+					"name" : "lcd_rgb[2]",
+					"strict" : false
+				},
+				{
+					"name" : "lcd_rgb[3]",
+					"strict" : false
+				},
+				{
+					"name" : "lcd_rgb[4]",
+					"strict" : false
+				},
+				{
+					"name" : "lcd_rgb[5]",
+					"strict" : false
+				},
+				{
+					"name" : "lcd_rgb[6]",
+					"strict" : false
+				},
+				{
+					"name" : "lcd_rgb[7]",
+					"strict" : false
+				},
+				{
+					"name" : "lcd_rgb[8]",
+					"strict" : false
+				},
+				{
+					"name" : "lcd_rgb[9]",
+					"strict" : false
+				},
+				{
+					"name" : "lcd_rgb[10]",
+					"strict" : false
+				},
+				{
+					"name" : "lcd_rgb[11]",
+					"strict" : false
+				},
+				{
+					"name" : "lcd_rgb[12]",
+					"strict" : false
+				},
+				{
+					"name" : "lcd_rgb[13]",
+					"strict" : false
+				},
+				{
+					"name" : "lcd_rgb[14]",
+					"strict" : false
+				},
+				{
+					"name" : "lcd_rgb[15]",
+					"strict" : false
+				},
+				{
+					"name" : "sys_rst_n",
+					"strict" : false
+				},
+				{
+					"name" : "sys_clk",
+					"strict" : false
+				},
+				{
+					"name" : "cam_pclk",
+					"strict" : false
+				},
+				{
+					"name" : "cam_data[0]",
+					"strict" : false
+				},
+				{
+					"name" : "cam_href",
+					"strict" : false
+				},
+				{
+					"name" : "cam_data[1]",
+					"strict" : false
+				},
+				{
+					"name" : "cam_data[2]",
+					"strict" : false
+				},
+				{
+					"name" : "cam_data[3]",
+					"strict" : false
+				},
+				{
+					"name" : "cam_data[4]",
+					"strict" : false
+				},
+				{
+					"name" : "cam_data[5]",
+					"strict" : false
+				},
+				{
+					"name" : "cam_data[6]",
+					"strict" : false
+				},
+				{
+					"name" : "cam_data[7]",
+					"strict" : false
+				},
+				{
+					"name" : "cam_vsync",
+					"strict" : false
+				}
+			]
+		}
+	]
+}

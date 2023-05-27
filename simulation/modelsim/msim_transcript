@@ -1,0 +1,72 @@
+# Reading C:/intelFPGA/18.0/modelsim_ase/tcl/vsim/pref.tcl
+# ERROR: No extended dataflow license exists
+# do cnn_run_msim_gate_vhdl.do
+# if {[file exists gate_work]} {
+# 	vdel -lib gate_work -all
+# }
+# vlib gate_work
+# vmap work gate_work
+# Model Technology ModelSim - Intel FPGA Edition vmap 10.5b Lib Mapping Utility 2016.10 Oct  5 2016
+# vmap work gate_work 
+# Copying C:/intelFPGA/18.0/modelsim_ase/win32aloem/../modelsim.ini to modelsim.ini
+# Modifying modelsim.ini
+# 
+# vcom -93 -work work {cnn_8_1200mv_85c_slow.vho}
+# Model Technology ModelSim - Intel FPGA Edition vcom 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 21:51:47 on Feb 12,2023
+# vcom -reportprogress 300 -93 -work work cnn_8_1200mv_85c_slow.vho 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package VITAL_Timing
+# -- Loading package VITAL_Primitives
+# -- Loading package dffeas_pack
+# -- Loading package altera_primitives_components
+# -- Loading package cycloneive_atom_pack
+# -- Loading package cycloneive_components
+# -- Compiling entity top
+# -- Compiling architecture structure of top
+# -- Loading package STANDARD
+# End time: 21:51:53 on Feb 12,2023, Elapsed time: 0:00:06
+# Errors: 0, Warnings: 0
+# 
+# vcom -93 -work work {C:/Users/Wang Kang Li/Desktop/model/cnn/simulation/modelsim/ram_pixel.vht}
+# Model Technology ModelSim - Intel FPGA Edition vcom 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 21:51:53 on Feb 12,2023
+# vcom -reportprogress 300 -93 -work work C:/Users/Wang Kang Li/Desktop/model/cnn/simulation/modelsim/ram_pixel.vht 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_arith
+# -- Loading package STD_LOGIC_SIGNED
+# -- Compiling entity ram_pixel_vhd_tst
+# -- Compiling architecture ram_pixel_arch of ram_pixel_vhd_tst
+# ** Warning: C:/Users/Wang Kang Li/Desktop/model/cnn/simulation/modelsim/ram_pixel.vht(64): (vcom-1207) An abstract literal and an identifier must have a separator between them.
+# ** Warning: C:/Users/Wang Kang Li/Desktop/model/cnn/simulation/modelsim/ram_pixel.vht(147): (vcom-1207) An abstract literal and an identifier must have a separator between them.
+# ** Warning: C:/Users/Wang Kang Li/Desktop/model/cnn/simulation/modelsim/ram_pixel.vht(156): (vcom-1207) An abstract literal and an identifier must have a separator between them.
+# End time: 21:51:53 on Feb 12,2023, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 3
+# 
+# vsim -t 1ps +transport_int_delays +transport_path_delays -sdftyp /i1=cnn_8_1200mv_85c_vhd_slow.sdo -L altera -L cycloneive -L gate_work -L work -voptargs="+acc"  ram_pixel_vhd_tst
+# vsim -t 1ps "+transport_int_delays" "+transport_path_delays" -sdftyp /i1=cnn_8_1200mv_85c_vhd_slow.sdo -L altera -L cycloneive -L gate_work -L work -voptargs=""+acc"" ram_pixel_vhd_tst 
+# Start time: 21:51:53 on Feb 12,2023
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.std_logic_arith(body)
+# Loading ieee.std_logic_signed(body)
+# Loading work.ram_pixel_vhd_tst(ram_pixel_arch)
+# SDF 10.5b Compiler 2016.10 Oct  5 2016
+# 
+# ** Warning: (vsim-3473) Component instance "i1 : ram_pixel" is not bound.
+#    Time: 0 ps  Iteration: 0  Instance: /ram_pixel_vhd_tst File: C:/Users/Wang Kang Li/Desktop/model/cnn/simulation/modelsim/ram_pixel.vht
+# Loading instances from cnn_8_1200mv_85c_vhd_slow.sdo
+# ** Error (suppressible): (vsim-SDF-3250) cnn_8_1200mv_85c_vhd_slow.sdo(0): Failed to find INSTANCE '/i1'.
+# ** Error (suppressible): (vsim-SDF-3894) : Errors occured in reading and resolving instances from compiled SDF file(s).
+# ** Error (suppressible): (vsim-SDF-3250) cnn_8_1200mv_85c_vhd_slow.sdo(0): Failed to find INSTANCE '/i1'.
+# Error loading design
+# Error: Error loading design
+#        Pausing macro execution
+# MACRO ./cnn_run_msim_gate_vhdl.do PAUSED at line 12
+# End time: 21:52:07 on Feb 12,2023, Elapsed time: 0:00:14
+# Errors: 3, Warnings: 1

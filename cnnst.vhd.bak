@@ -1,0 +1,88 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_arith.all;
+use ieee.std_logic_signed.all;
+
+entity cnn is
+	port(
+		clk:in std_logic;
+		rst_n:in std_logic;
+	layer_done:in std_logic;
+	weight_ready:out std_logic;
+	pool_ready:out std_logic;
+	gobal_ready:out std_logic;
+	laye:out std_logic_vector(3 DOWNTO 0)
+	);
+end entity;
+
+
+architecture behav of cnn is
+
+
+signal delay:std_logic:='0';
+signal layer:std_logic_vector(3 downto 0);
+begin
+
+
+process(clk)
+begin
+if rst_n='0' then
+	delay <= '0';
+elsif rising_edge(clk) then
+	if(cnn_ready='1')or(layer_done='1') then
+		delay <= '1';
+	else delay <= '0';
+	end if;
+end if;
+end process;
+
+process(clk)
+begin
+if rst_n='0' then
+	layer <= "0000";
+elsif rising_edge(clk) then
+	if delay='1' then
+		layer <= layer + '1';
+	end if;
+end if;
+end process;
+
+process(clk)
+begin
+if rst_n='0' then
+	pool_ready <= '0';
+elsif rising_edge(clk) then
+	if(delay='1')and((layer="0010")or(layer="0101")) then
+		pool_ready <= '1';
+	else pool_ready <= '0';
+	end if;
+end if;
+end process;
+
+process(clk)
+begin
+if rst_n='0' then
+	gobal_ready <= '0';
+elsif rising_edge(clk) then
+	if(delay='1')and(layer="0111") then
+		gobal_ready <= '1';
+	else gobal_ready <= '0';
+	end if;
+end if;
+end process;
+
+process(clk)
+begin
+if rst_n='0' then
+	weight_ready <= '0';
+elsif rising_edge(clk) then
+	if(delay='1')and((layer="0000")or(layer="0001")or(layer="0011")or(layer="0100")or(layer="0110")) then
+		weight_ready <= '1';
+	else weight_ready <= '0';
+	end if;
+end if;
+end process;
+
+laye<=layer;
+
+end behav;

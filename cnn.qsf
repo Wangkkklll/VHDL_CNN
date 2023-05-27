@@ -1,0 +1,247 @@
+# -------------------------------------------------------------------------- #
+#
+# Copyright (C) 2018  Intel Corporation. All rights reserved.
+# Your use of Intel Corporation's design tools, logic functions 
+# and other software and tools, and its AMPP partner logic 
+# functions, and any output files from any of the foregoing 
+# (including device programming or simulation files), and any 
+# associated documentation or information are expressly subject 
+# to the terms and conditions of the Intel Program License 
+# Subscription Agreement, the Intel Quartus Prime License Agreement,
+# the Intel FPGA IP License Agreement, or other applicable license
+# agreement, including, without limitation, that your use is for
+# the sole purpose of programming logic devices manufactured by
+# Intel and sold by Intel or its authorized distributors.  Please
+# refer to the applicable agreement for further details.
+#
+# -------------------------------------------------------------------------- #
+#
+# Quartus Prime
+# Version 18.0.0 Build 614 04/24/2018 SJ Standard Edition
+# Date created = 15:52:44  January 15, 2023
+#
+# -------------------------------------------------------------------------- #
+#
+# Notes:
+#
+# 1) The default values for assignments are stored in the file:
+#		cnn_assignment_defaults.qdf
+#    If this file doesn't exist, see file:
+#		assignment_defaults.qdf
+#
+# 2) Altera recommends that you do not modify this file. This
+#    file is updated automatically by the Quartus Prime software
+#    and any changes you make may be lost or overwritten.
+#
+# -------------------------------------------------------------------------- #
+
+
+set_global_assignment -name FAMILY "Cyclone IV E"
+set_global_assignment -name DEVICE EP4CE10F17C8
+set_global_assignment -name TOP_LEVEL_ENTITY top
+set_global_assignment -name ORIGINAL_QUARTUS_VERSION 18.0.0
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "15:52:44  JANUARY 15, 2023"
+set_global_assignment -name LAST_QUARTUS_VERSION "18.0.0 Standard Edition"
+set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
+set_global_assignment -name EDA_SIMULATION_TOOL "ModelSim-Altera (VHDL)"
+set_global_assignment -name EDA_TIME_SCALE "1 ps" -section_id eda_simulation
+set_global_assignment -name EDA_OUTPUT_DATA_FORMAT VHDL -section_id eda_simulation
+set_global_assignment -name EDA_TEST_BENCH_ENABLE_STATUS TEST_BENCH_MODE -section_id eda_simulation
+set_global_assignment -name EDA_NATIVELINK_SIMULATION_TEST_BENCH ram_pixel -section_id eda_simulation
+set_global_assignment -name EDA_MAP_ILLEGAL_CHARACTERS OFF -section_id eda_simulation
+set_global_assignment -name EDA_ENABLE_GLITCH_FILTERING ON -section_id eda_simulation
+set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
+set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
+set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
+set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
+set_global_assignment -name EDA_TEST_BENCH_NAME cnn -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME i1 -section_id cnn
+set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "2 ms" -section_id cnn
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME cnn_vhd_tst -section_id cnn
+set_global_assignment -name EDA_TEST_BENCH_NAME rom_weight -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME i1 -section_id rom_weight
+set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "10000 ns" -section_id rom_weight
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME rom_weight_vhd_tst -section_id rom_weight
+set_global_assignment -name EDA_TEST_BENCH_NAME top_control -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME i1 -section_id top_control
+set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "100000 ns" -section_id top_control
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME top_control_vhd_tst -section_id top_control
+set_global_assignment -name EDA_TEST_BENCH_NAME rd_control -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME i1 -section_id rd_control
+set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "100000 ns" -section_id rd_control
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME rd_control_vhd_tst -section_id rd_control
+set_global_assignment -name EDA_TEST_BENCH_NAME wr_control -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME i1 -section_id wr_control
+set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "200000 ns" -section_id wr_control
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME wr_control_vhd_tst -section_id wr_control
+set_global_assignment -name EDA_TEST_BENCH_NAME gray_in -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME i1 -section_id gray_in
+set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "12000 ns" -section_id gray_in
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME gray_in_vhd_tst -section_id gray_in
+set_global_assignment -name EDA_TEST_BENCH_FILE simulation/modelsim/cnn.vht -section_id cnn
+set_global_assignment -name EDA_TEST_BENCH_FILE simulation/modelsim/rom_weight.vht -section_id rom_weight
+set_global_assignment -name EDA_TEST_BENCH_FILE simulation/modelsim/top_control.vht -section_id top_control
+set_global_assignment -name EDA_TEST_BENCH_FILE simulation/modelsim/rd_control.vht -section_id rd_control
+set_global_assignment -name EDA_TEST_BENCH_FILE simulation/modelsim/wr_control.vht -section_id wr_control
+set_global_assignment -name EDA_TEST_BENCH_FILE simulation/modelsim/gray_in.vht -section_id gray_in
+set_global_assignment -name EDA_TEST_BENCH_NAME ram_pixel -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME i1 -section_id ram_pixel
+set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "100000 ns" -section_id ram_pixel
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME ram_pixel_vhd_tst -section_id ram_pixel
+set_global_assignment -name EDA_TEST_BENCH_FILE simulation/modelsim/ram_pixel.vht -section_id ram_pixel
+set_location_assignment PIN_M2 -to sys_clk
+set_location_assignment PIN_M1 -to sys_rst_n
+set_location_assignment PIN_B14 -to sdram_clk
+set_location_assignment PIN_G11 -to sdram_ba[0]
+set_location_assignment PIN_F13 -to sdram_ba[1]
+set_location_assignment PIN_J12 -to sdram_cas_n
+set_location_assignment PIN_F16 -to sdram_cke
+set_location_assignment PIN_K11 -to sdram_ras_n
+set_location_assignment PIN_J13 -to sdram_we_n
+set_location_assignment PIN_K10 -to sdram_cs_n
+set_location_assignment PIN_J14 -to sdram_dqm[0]
+set_location_assignment PIN_G15 -to sdram_dqm[1]
+set_location_assignment PIN_F11 -to sdram_addr[0]
+set_location_assignment PIN_E11 -to sdram_addr[1]
+set_location_assignment PIN_D14 -to sdram_addr[2]
+set_location_assignment PIN_C14 -to sdram_addr[3]
+set_location_assignment PIN_A14 -to sdram_addr[4]
+set_location_assignment PIN_A15 -to sdram_addr[5]
+set_location_assignment PIN_B16 -to sdram_addr[6]
+set_location_assignment PIN_C15 -to sdram_addr[7]
+set_location_assignment PIN_C16 -to sdram_addr[8]
+set_location_assignment PIN_D15 -to sdram_addr[9]
+set_location_assignment PIN_F14 -to sdram_addr[10]
+set_location_assignment PIN_D16 -to sdram_addr[11]
+set_location_assignment PIN_F15 -to sdram_addr[12]
+set_location_assignment PIN_P14 -to sdram_data[0]
+set_location_assignment PIN_M12 -to sdram_data[1]
+set_location_assignment PIN_N14 -to sdram_data[2]
+set_location_assignment PIN_L12 -to sdram_data[3]
+set_location_assignment PIN_L13 -to sdram_data[4]
+set_location_assignment PIN_L14 -to sdram_data[5]
+set_location_assignment PIN_L11 -to sdram_data[6]
+set_location_assignment PIN_K12 -to sdram_data[7]
+set_location_assignment PIN_G16 -to sdram_data[8]
+set_location_assignment PIN_J11 -to sdram_data[9]
+set_location_assignment PIN_J16 -to sdram_data[10]
+set_location_assignment PIN_J15 -to sdram_data[11]
+set_location_assignment PIN_K16 -to sdram_data[12]
+set_location_assignment PIN_K15 -to sdram_data[13]
+set_location_assignment PIN_L16 -to sdram_data[14]
+set_location_assignment PIN_L15 -to sdram_data[15]
+set_location_assignment PIN_R1 -to lcd_bl
+set_location_assignment PIN_T2 -to lcd_de
+set_location_assignment PIN_T3 -to lcd_hs
+set_location_assignment PIN_P3 -to lcd_vs
+set_location_assignment PIN_R3 -to lcd_pclk
+set_location_assignment PIN_L1 -to lcd_rst
+set_location_assignment PIN_T4 -to lcd_rgb[4]
+set_location_assignment PIN_R4 -to lcd_rgb[3]
+set_location_assignment PIN_T5 -to lcd_rgb[2]
+set_location_assignment PIN_R5 -to lcd_rgb[1]
+set_location_assignment PIN_T6 -to lcd_rgb[0]
+set_location_assignment PIN_R6 -to lcd_rgb[10]
+set_location_assignment PIN_T7 -to lcd_rgb[9]
+set_location_assignment PIN_R7 -to lcd_rgb[8]
+set_location_assignment PIN_T8 -to lcd_rgb[7]
+set_location_assignment PIN_R8 -to lcd_rgb[6]
+set_location_assignment PIN_T9 -to lcd_rgb[5]
+set_location_assignment PIN_R9 -to lcd_rgb[15]
+set_location_assignment PIN_T10 -to lcd_rgb[14]
+set_location_assignment PIN_R10 -to lcd_rgb[13]
+set_location_assignment PIN_T11 -to lcd_rgb[12]
+set_location_assignment PIN_R11 -to lcd_rgb[11]
+set_location_assignment PIN_T14 -to cam_data[7]
+set_location_assignment PIN_R14 -to cam_data[6]
+set_location_assignment PIN_N6 -to cam_data[5]
+set_location_assignment PIN_P6 -to cam_data[4]
+set_location_assignment PIN_M8 -to cam_data[3]
+set_location_assignment PIN_N8 -to cam_data[2]
+set_location_assignment PIN_P8 -to cam_data[1]
+set_location_assignment PIN_K9 -to cam_data[0]
+set_location_assignment PIN_M9 -to cam_href
+set_location_assignment PIN_R13 -to cam_pclk
+set_location_assignment PIN_L9 -to cam_rst_n
+set_location_assignment PIN_N9 -to cam_scl
+set_location_assignment PIN_L10 -to cam_sda
+set_location_assignment PIN_P9 -to cam_vsync
+set_location_assignment PIN_R12 -to cam_sgm_ctrl
+set_location_assignment PIN_D9 -to seg_d[7]
+set_location_assignment PIN_P11 -to seg_d[6]
+set_location_assignment PIN_N11 -to seg_d[5]
+set_location_assignment PIN_M10 -to seg_d[4]
+set_location_assignment PIN_N13 -to seg_d[3]
+set_location_assignment PIN_C9 -to seg_d[2]
+set_location_assignment PIN_N12 -to seg_d[1]
+set_location_assignment PIN_M11 -to seg_d[0]
+set_location_assignment PIN_T15 -to seg_w[5]
+set_location_assignment PIN_R16 -to seg_w[4]
+set_location_assignment PIN_P15 -to seg_w[3]
+set_location_assignment PIN_P16 -to seg_w[2]
+set_location_assignment PIN_N15 -to seg_w[1]
+set_location_assignment PIN_N16 -to seg_w[0]
+set_global_assignment -name ENABLE_OCT_DONE OFF
+set_global_assignment -name ENABLE_CONFIGURATION_PINS OFF
+set_global_assignment -name ENABLE_BOOT_SEL_PIN OFF
+set_global_assignment -name USE_CONFIGURATION_DEVICE OFF
+set_global_assignment -name CRC_ERROR_OPEN_DRAIN OFF
+set_global_assignment -name CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION "USE AS REGULAR IO"
+set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -rise
+set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -fall
+set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -rise
+set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -fall
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name VHDL_FILE top/top.vhd
+set_global_assignment -name VHDL_FILE seg.vhd
+set_global_assignment -name VHDL_FILE cmos_lcd_pll_sdram/wrfifo.vhd
+set_global_assignment -name VHDL_FILE cmos_lcd_pll_sdram/sdram_top.vhd
+set_global_assignment -name VHDL_FILE cmos_lcd_pll_sdram/sdram_fifo_ctrl.vhd
+set_global_assignment -name VHDL_FILE cmos_lcd_pll_sdram/sdram_datas.vhd
+set_global_assignment -name VHDL_FILE cmos_lcd_pll_sdram/sdram_ctrl.vhd
+set_global_assignment -name VHDL_FILE cmos_lcd_pll_sdram/sdram_controller.vhd
+set_global_assignment -name VHDL_FILE cmos_lcd_pll_sdram/sdram_cmd.vhd
+set_global_assignment -name VHDL_FILE cmos_lcd_pll_sdram/rdfifo.vhd
+set_global_assignment -name VHDL_FILE cmos_lcd_pll_sdram/rd_id.vhd
+set_global_assignment -name VHDL_FILE cmos_lcd_pll_sdram/ov7725_rgb565_lcd.vhd
+set_global_assignment -name VHDL_FILE cmos_lcd_pll_sdram/lcd_rgb_top.vhd
+set_global_assignment -name VHDL_FILE cmos_lcd_pll_sdram/lcd_driver.vhd
+set_global_assignment -name VHDL_FILE cmos_lcd_pll_sdram/lcd_display.vhd
+set_global_assignment -name VHDL_FILE cmos_lcd_pll_sdram/i2c_ov7725_rgb565_cfg.vhd
+set_global_assignment -name VHDL_FILE cmos_lcd_pll_sdram/i2c_dri.vhd
+set_global_assignment -name VHDL_FILE cmos_lcd_pll_sdram/cmos_tailor.vhd
+set_global_assignment -name VHDL_FILE cmos_lcd_pll_sdram/cmos_data_top.vhd
+set_global_assignment -name VHDL_FILE cmos_lcd_pll_sdram/cmos_capture_data.vhd
+set_global_assignment -name VHDL_FILE cmos_lcd_pll_sdram/clk_div.vhd
+set_global_assignment -name VHDL_FILE rtl_cnn/wr_control.vhd
+set_global_assignment -name VHDL_FILE rtl_cnn/top_control.vhd
+set_global_assignment -name VHDL_FILE rtl_cnn/to_gray.vhd
+set_global_assignment -name VHDL_FILE rtl_cnn/rom_weight.vhd
+set_global_assignment -name VHDL_FILE rtl_cnn/ram_pixel.vhd
+set_global_assignment -name VHDL_FILE rtl_cnn/gray_in.vhd
+set_global_assignment -name VHDL_FILE rtl_cnn/full_connect.vhd
+set_global_assignment -name VHDL_FILE rtl_cnn/conv_maxpool.vhd
+set_global_assignment -name VHDL_FILE rtl_cnn/conv.vhd
+set_global_assignment -name VHDL_FILE rtl_cnn/cnnst.vhd
+set_global_assignment -name VHDL_FILE rtl_cnn/cnn.vhd
+set_global_assignment -name VHDL_FILE rtl_cnn/addr_init.vhd
+set_global_assignment -name HEX_FILE ram_test.hex
+set_global_assignment -name QIP_FILE ram_input.qip
+set_global_assignment -name QIP_FILE ram_input_b.qip
+set_global_assignment -name QIP_FILE ram_input_c.qip
+set_global_assignment -name QIP_FILE ram_input_d.qip
+set_global_assignment -name QIP_FILE ram_output1.qip
+set_global_assignment -name QIP_FILE ram_output1_b.qip
+set_global_assignment -name QIP_FILE ram_output1_c.qip
+set_global_assignment -name QIP_FILE ram_output1_d.qip
+set_global_assignment -name QIP_FILE ram_output2.qip
+set_global_assignment -name QIP_FILE ram_output2_b.qip
+set_global_assignment -name QIP_FILE ram_output2_c.qip
+set_global_assignment -name QIP_FILE ram_output2_d.qip
+set_global_assignment -name HEX_FILE rom.hex
+set_global_assignment -name QIP_FILE rom_read.qip
+set_global_assignment -name VECTOR_WAVEFORM_FILE Waveform.vwf
+set_global_assignment -name QIP_FILE pll_clk.qip
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

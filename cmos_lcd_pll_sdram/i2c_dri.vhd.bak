@@ -1,0 +1,454 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
+
+entity i2c_dri is
+	GENERIC (
+    --slave_addr: 	std_logic_vector(6 downto 0):="1010000";	--EEPROM从机地址
+		slave_addr: 	std_logic_vector(6 downto 0):="0100001";	--ov7725从机地址
+	  clk_freq	:	STD_LOGIC_VECTOR(25 DOWNTO 0):= "10111110101111000010000000";--模块输入的时钟频率
+	  i2c_freq	:	STD_LOGIC_VECTOR(17 DOWNTO 0):= "111101000010010000"--IIC_SCL的时钟频率
+	);
+	
+	port(
+		clk,rst_n:	in 	std_logic;
+		--i2c interface    
+		i2c_exec:	in 	std_logic;							--I2C触发执行信号
+		bit_ctrl:	in 	std_logic;							--字地址位控制(16b/8b)
+		i2c_rh_wl:	in 	std_logic;							--I2C读写控制信号
+		i2c_addr:	in 	std_logic_vector(15 downto 0);--I2C器件内地址
+		i2c_data_w:	in 	std_logic_vector(7 downto 0);	--I2C要写的数据
+		i2c_data_r:	out 	std_logic_vector(7 downto 0);	--I2C读出的数据
+		i2c_done:	out 	std_logic;							--I2C一次操作完成
+		i2c_ack:		out 	std_logic;							--I2C应答标志 0:应答 1:未应答
+		scl:			out 	std_logic;							--I2C的SCL时钟信号
+		sda:			inout std_logic;							--I2C的SDA信号
+		--user interface--驱动I2C操作的驱动时钟
+		dri_clk:		buffer 	std_logic							
+	);
+end entity;
+
+architecture behav of i2c_dri is 
+
+constant st_idle:		std_logic_vector(7 downto 0):="00000001";		--空闲状态
+constant st_sladdr:	std_logic_vector(7 downto 0):="00000010";		--发送器件地址(slave address)
+constant st_addr16:	std_logic_vector(7 downto 0):="00000100";		--发送16位字地址
+constant st_addr8:	std_logic_vector(7 downto 0):="00001000";		--发送8位字地址
+constant st_data_wr:	std_logic_vector(7 downto 0):="00010000";		--写数据(8 bit)
+constant st_addr_rd:	std_logic_vector(7 downto 0):="00100000";		--发送器件地址读
+constant st_data_rd:	std_logic_vector(7 downto 0):="01000000";		--读数据(8 bit)
+constant st_stop:		std_logic_vector(7 downto 0):="10000000";		--结束I2C操作
+
+signal sda_dir:	std_logic;								--i2c数据（sda）方向控制
+signal sda_out:	std_logic;								--sda输出信号
+signal st_done:	std_logic;								--状态结束
+signal wr_flag:	std_logic;								--写标志
+signal cnt:			std_logic_vector(6 downto 0);		--计数
+signal cur_state:	std_logic_vector(7 downto 0);		--状态机当前状态
+signal next_state:std_logic_vector(7 downto 0);		--状态机下一状态
+signal addr_t:		std_logic_vector(15 downto 0);	--地址
+signal data_r:		std_logic_vector(7 downto 0);		--读取的数据
+signal data_wr_t:	std_logic_vector(7 downto 0);		--I2C需写的数据的临时寄存
+signal clk_cnt:	std_logic_vector(9 downto 0);		--分频时钟计数
+
+signal sda_in:			std_logic;							--sda输入信号
+signal clk_divide:	std_logic_vector(8 downto 0);	--模块驱动时钟的分频系数
+
+begin
+--sda控制
+sda <= sda_out when sda_dir = '1' else	--SDA数据输出或高阻
+		'Z';
+sda_in <= sda;									--sda数据输入
+clk_divide <= "000110010";					--(CLK_FREQ/I2C_FREQ) >> 2'd2;模块驱动时钟的分频系数
+
+--生成I2C的SCL的四倍频率的驱动时钟用于驱动i2c的操作
+process(clk,rst_n)
+begin
+	if(rst_n = '0') then
+		dri_clk <= '0';
+		clk_cnt <= "0000000000";
+	elsif(rising_edge(clk)) then
+		if(clk_cnt = clk_divide(8 downto 1) - "00000001") then
+			clk_cnt <= "0000000000";
+			dri_clk <= (not dri_clk);
+			
+			clk_cnt <= clk_cnt + "0000000001";
+		end if;
+	end if;
+end process;
+
+--(三段式状态机)同步时序描述状态转移
+process(clk,rst_n)
+begin
+	if(rst_n = '0') then
+		cur_state <= st_idle;
+	elsif(rising_edge(clk)) then
+		cur_state <= next_state;
+	end if;
+end process;
+
+--组合逻辑判断状态转移条件
+process(cur_state,i2c_exec,st_done,bit_ctrl,wr_flag)
+begin
+	next_state <= st_idle;
+	case cur_state is				
+		when st_idle => if(i2c_exec = '1') then		--空闲状态
+								 next_state <= st_sladdr;
+							 else
+								 next_state <= st_idle;
+							 end if;
+		when st_sladdr => if(st_done = '1') then
+									if(bit_ctrl = '1') then			--判断是16位还是8位字地址
+										next_state <= st_addr16;
+									else	
+										next_state <= st_addr8 ;
+									end if;
+								 else
+									next_state <= st_sladdr;
+								 end if;
+		when st_addr16 =>	if(st_done = '1') then    --写16位字地址
+									next_state <= st_addr8;
+								else	
+									next_state <= st_addr16;
+								end if;
+		when st_addr8 =>  if(st_done = '1') then		--8位字地址
+									if(wr_flag = '0') then           --读写判断
+										next_state <= st_data_wr;
+									else	
+										next_state <= st_addr_rd;
+									end if;
+								else	
+									next_state <= st_addr8;
+								end if;
+		when st_data_wr =>   if(st_done = '1') then		--写数据(8 bit)
+										next_state <= st_stop;
+									else	
+										next_state <= st_data_wr;
+									end if;
+		when st_addr_rd =>if(st_done = '1') then 		--写地址以进行读数据
+									next_state <= st_data_rd;
+								else	
+									next_state <= st_addr_rd;
+								end if;
+		when st_data_rd =>if(st_done = '1') then 		--读取数据（8bit）
+									next_state <= st_stop;
+								else	
+									next_state <= st_data_rd;
+								end if;
+		when st_stop =>if(st_done = '1') then 		--结束i2c操作
+								next_state <= st_idle;
+							else
+								next_state <= st_stop;
+							end if;
+		when others => next_state <= st_idle;
+	end case;
+end process;
+
+--时序电路描述状态输出
+process(clk,rst_n)
+begin
+
+	--复位初始化
+	if(rst_n = '0') then
+		scl       <= '1';
+		sda_out   <= '1';
+		sda_dir   <= '1';                          
+		i2c_done  <= '0';                          
+      i2c_ack   <= '0';                          
+      cnt       <= "0000000";                          
+      st_done   <= '0';                          
+      data_r    <= "00000000";                          
+      i2c_data_r<= "00000000";                          
+      wr_flag   <= '0';                          
+      addr_t    <= "0000000000000000";                          
+      data_wr_t <= "00000000";     
+		
+		
+	elsif(rising_edge(clk)) then
+			st_done <= '0';
+			cnt <= cnt + 1;
+			if(cur_state = st_idle) then				--空闲状态
+				scl     <= '1';                     
+				sda_out <= '1';                     
+				sda_dir <= '1';                     
+				i2c_done<= '0';                     
+				cnt     <= "0000000"; 
+				if(i2c_exec = '1') then
+					wr_flag   <= i2c_rh_wl;         
+					addr_t    <= i2c_addr;         
+					data_wr_t <= i2c_data_w;  
+					i2c_ack <= '0';                      
+				end if;		
+			elsif(cur_state = st_sladdr) then		--写地址(器件地址和字地址)
+				case cnt is
+					when "0000001" => sda_out <= '0';          	--开始I2C
+					when "0000011" => scl <= '0';
+					when "0000100" => sda_out <= slave_addr(6);	--传送器地址
+					when "0000101" => scl <= '1';
+					when "0000111" => scl <= '0';
+					when "0001000" => sda_out <= slave_addr(5);
+					when "0001001" => scl <= '1';
+					when "0001011" => scl <= '0';
+					when "0001100" => sda_out <= slave_addr(4);
+					when "0001101" => scl <= '1';
+					when "0001111" => scl <= '0';
+					when "0010000" => sda_out <= slave_addr(3);
+					when "0010001" => scl <= '1';
+					when "0010011" => scl <= '0';
+					when "0010100" => sda_out <= slave_addr(2);
+					when "0010101" => scl <= '1';
+					when "0010111" => scl <= '0';		
+					when "0011000" => sda_out <= slave_addr(1);
+					when "0011001" => scl <= '1';
+					when "0011011" => scl <= '0';
+					when "0011100" => sda_out <= slave_addr(0);
+					when "0011101" => scl <= '1';
+					when "0011111" => scl <= '0';
+					when "0100000" => sda_out <= '0';				--0:写
+					when "0100001" => scl <= '1';
+					when "0100011" => scl <= '0';
+					when "0100100" => sda_dir <= '0'; sda_out <= '1';
+					when "0100101" => scl <= '1';
+					when "0100110" => st_done <= '1';				--从机应答
+											if(sda_in = '1') then		--高电平表示未应答
+												i2c_ack <= '1';			--拉高应答标志位
+											end if;
+					when "0100111" => scl <= '0';cnt <= "0000000";
+					when others => null;
+				end case;
+			elsif(cur_state = st_addr16) then
+				if(cnt = "0000000") then
+					sda_dir <= '1';
+					sda_out <= addr_t(15);		--传送字地址
+				elsif(cnt = "0000001") then
+					scl <= '1';
+				elsif(cnt = "0000011") then
+					scl <= '0';
+				elsif(cnt = "0000100") then
+					sda_out <= addr_t(14);
+				elsif(cnt = "0000101") then
+					scl <= '1';
+				elsif(cnt = "0000111") then
+					scl <= '0';
+				elsif(cnt = "0001000") then
+					sda_out <= addr_t(13);
+				elsif(cnt = "0001001") then
+					scl <= '1';
+				elsif(cnt = "0001011") then
+					scl <= '0';
+				elsif(cnt = "0001100") then
+					sda_out <= addr_t(12);
+				elsif(cnt = "0001101") then
+					scl <= '1';
+				elsif(cnt = "0001111") then
+					scl <= '0';
+				elsif(cnt = "0010000") then
+					sda_out <= addr_t(11);
+				elsif(cnt = "0010001") then
+					scl <= '1';
+				elsif(cnt = "0010011") then
+					scl <= '0';
+				elsif(cnt = "0010100") then
+					sda_out <= addr_t(10);
+				elsif(cnt = "0010101") then
+					scl <= '1';
+				elsif(cnt = "0010111") then
+					scl <= '0';
+				elsif(cnt = "0011000") then
+					sda_out <= addr_t(9);
+				elsif(cnt = "0011001") then
+					scl <= '1';
+				elsif(cnt = "0011011") then
+					scl <= '0';	
+				elsif(cnt = "0011100") then
+					sda_out <= addr_t(8);
+				elsif(cnt = "0011101") then
+					scl <= '1';
+				elsif(cnt = "0011111") then
+					scl <= '0';
+				elsif(cnt = "0100000") then
+					sda_dir <= '0';
+					sda_out <= '1';
+				elsif(cnt = "0100001") then
+					scl <= '1';
+				elsif(cnt = "0100010") then		--从机应答
+					st_done <= '1';					
+					if(sda_in = '1') then			--高电平表示未应答
+						i2c_ack <= '1';				--拉高应答标志
+					end if;
+				elsif(cnt = "0100011") then
+					scl <= '0';
+					cnt <= "0000000";
+				end if;
+					
+			elsif(cur_state = st_addr8) then
+				case cnt is
+					when "0000000" => sda_dir <= '1';
+											sda_out <= addr_t(7);				--字地址
+					when "0000001" => scl <= '1';
+					when "0000011" => scl <= '0';
+					when "0000100" => sda_out <= addr_t(6);
+					when "0000101" => scl <= '1';
+					when "0000111" => scl <= '0';
+					when "0001000" => sda_out <= addr_t(5);
+					when "0001001" => scl <= '1';
+					when "0001011" => scl <= '0';
+					when "0001100" => sda_out <= addr_t(4);
+					when "0001101" => scl <= '1';
+					when "0001111" => scl <= '0';
+					when "0010000" => sda_out <= addr_t(3);
+					when "0010001" => scl <= '1';
+					when "0010011" => scl <= '0';
+					when "0010100" => sda_out <= addr_t(2);
+					when "0010101" => scl <= '1';
+					when "0010111" => scl <= '0';		
+					when "0011000" => sda_out <= addr_t(1);
+					when "0011001" => scl <= '1';
+					when "0011011" => scl <= '0';
+					when "0011100" => sda_out <= addr_t(0);
+					when "0011101" => scl <= '1';
+					when "0011111" => scl <= '0';
+					when "0100000" => sda_out <= '1';
+											sda_dir <= '0';
+					when "0100001" => scl <= '1';
+					when "0100010" => st_done <= '1';			--从机应答
+											if(sda_in = '1')then		--高电平表示未应答
+												i2c_ack <= '1';		--拉高应答标志位
+											end if;
+					when "0100011" => scl <= '0'; cnt <= "0000000";
+					when others => null;
+				end case;
+			elsif(cur_state = st_data_wr) then					--写8位数据
+				case cnt is
+					when "0000000" => sda_out <= data_wr_t(7);--i2c写8位数据
+											sda_dir <= '1';					
+					when "0000001" => scl <= '1';
+					when "0000011" => scl <= '0';
+					when "0000100" => sda_out <= data_wr_t(6);
+					when "0000101" => scl <= '1';
+					when "0000111" => scl <= '0';
+					when "0001000" => sda_out <= data_wr_t(5);
+					when "0001001" => scl <= '1';
+					when "0001011" => scl <= '0';
+					when "0001100" => sda_out <= data_wr_t(4);
+					when "0001101" => scl <= '1';
+					when "0001111" => scl <= '0';
+					when "0010000" => sda_out <= data_wr_t(3);
+					when "0010001" => scl <= '1';
+					when "0010011" => scl <= '0';
+					when "0010100" => sda_out <= data_wr_t(2);
+					when "0010101" => scl <= '1';
+					when "0010111" => scl <= '0';		
+					when "0011000" => sda_out <= data_wr_t(1);
+					when "0011001" => scl <= '1';
+					when "0011011" => scl <= '0';
+					when "0011100" => sda_out <= data_wr_t(0);
+					when "0011101" => scl <= '1';
+					when "0011111" => scl <= '0';
+					when "0100000" => sda_out <= '1';
+											sda_dir <= '0';
+					when "0100001" => scl <= '1';
+					when "0100010" => st_done <= '1';			--从机应答
+											if(sda_in = '1')then		--高电平表示未应答
+												i2c_ack <= '1';		--拉高应答标志位
+											end if;
+					when "0100011" => scl <= '0'; 
+											cnt <= "0000000";
+					when others => null;
+				end case;
+			elsif(cur_state = st_addr_rd) then					--写地址以进行读数据
+				case cnt is
+					when "0000000" => sda_out <= '1';
+											sda_dir <= '1';					
+					when "0000001" => scl <= '1';
+					when "0000010" => sda_out <= '0';			--重新开始
+					when "0000011" => scl <= '0';
+					when "0000100" => sda_out <= slave_addr(6);--传送器件地址
+					when "0000101" => scl <= '1';
+					when "0000111" => scl <= '0';
+					when "0001000" => sda_out <= slave_addr(5);
+					when "0001001" => scl <= '1';
+					when "0001011" => scl <= '0';
+					when "0001100" => sda_out <= slave_addr(4);
+					when "0001101" => scl <= '1';
+					when "0001111" => scl <= '0';
+					when "0010000" => sda_out <= slave_addr(3);
+					when "0010001" => scl <= '1';
+					when "0010011" => scl <= '0';
+					when "0010100" => sda_out <= slave_addr(2);
+					when "0010101" => scl <= '1';
+					when "0010111" => scl <= '0';		
+					when "0011000" => sda_out <= slave_addr(1);
+					when "0011001" => scl <= '1';
+					when "0011011" => scl <= '0';
+					when "0011100" => sda_out <= slave_addr(0);
+					when "0011101" => scl <= '1';
+					when "0011111" => scl <= '0';
+					when "0100000" => sda_out <= '1';			--1：读
+					when "0100001" => scl <= '1';
+					when "0100011" => scl <= '0';
+					when "0100100" => sda_dir <= '0';
+											sda_out <= '1';
+					when "0100101" => scl <= '1';
+					when "0100110" => st_done <= '1';			--从机应答
+											if(sda_in = '1')then		--高电平表示未应答
+												i2c_ack <= '1';		--拉高应答标志位
+											end if;
+					when "0100111" => scl <= '0'; 
+											cnt <= "0000000";
+					when others => null;
+				end case;
+			elsif(cur_state = st_data_rd) then					--读取数据（8 bit）
+				case cnt is
+					when "0000000" => sda_dir <= '0';
+					when "0000001" => data_r(7) <= sda_in;
+											scl <= '1';
+					when "0000011" => scl <= '0';
+					when "0000101" => data_r(6) <= sda_in;
+											scl <= '1';
+					when "0000111" => scl <= '0';
+					when "0001001" => data_r(5) <= sda_in;
+											scl <= '1';
+					when "0001011" => scl <= '0';
+					when "0001101" => data_r(4) <= sda_in;
+											scl <= '1';
+					when "0001111" => scl <= '0';
+					when "0010001" => data_r(3) <= sda_in;
+											scl <= '1';
+					when "0010011" => scl <= '0';
+					when "0010101" => data_r(2) <= sda_in;
+											scl <= '1';	
+					when "0010111" => scl <= '0';
+					when "0011001" => data_r(1) <= sda_in;
+											scl <= '1';	
+					when "0011011" => scl <= '0';
+					when "0011101" => data_r(0) <= sda_in;
+											scl <= '1';			
+					when "0011111" => scl <= '0';
+					when "0100000" => sda_dir <= '1';
+											sda_out <= '1';
+					when "0100001" => scl <= '1';
+					when "0100010" => st_done <= '1';
+					when "0100011" => scl <= '0';
+											cnt <= "0000000";
+											i2c_data_r <= data_r;
+					when others => null;
+				end case;
+			elsif(cur_state = st_stop) then						--结束i2c操作
+				case cnt is
+					when "0000000" => sda_dir <= '1';			--结束i2c
+											sda_out <= '0';
+					when "0000001" => scl <= '1';
+					when "0000011" => sda_out <= '1';
+					when "0001111" => st_done <= '1';
+					when "0010000" => cnt <= "0000000";
+											i2c_done <= '1';			--向上层模块传输i2c结束信号
+					when others => null;
+				end case;
+			end if;
+	end if;
+
+end process;
+
+end behav;
+				

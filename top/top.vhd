@@ -1,0 +1,153 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_arith.all;
+use ieee.std_logic_signed.all;
+
+entity top is
+	port(
+	  sys_clk       : IN STD_LOGIC;	
+      sys_rst_n     : IN STD_LOGIC;	
+	  cam_pclk      : IN STD_LOGIC;									--cmos 数据像素时钟
+      cam_vsync     : IN STD_LOGIC;									--cmos 场同步信叿
+      cam_href      : IN STD_LOGIC;									--cmos 行同步信叿
+      cam_data      : IN STD_LOGIC_VECTOR(7 DOWNTO 0);		--cmos 数据
+      cam_rst_n     : OUT STD_LOGIC;								--cmos 复位信号，低电平有效
+      cam_sgm_ctrl  : OUT STD_LOGIC;								--cmos 时钟选择信号, 1:使用摄像头自带的晶振
+      cam_scl       : OUT STD_LOGIC;								--cmos SCCB_SCL线
+      cam_sda       : INOUT STD_LOGIC;								--cmos SCCB_SDA线
+      --SDRAM接口
+		sdram_clk     : OUT STD_LOGIC;								--SDRAM 时钟
+      sdram_cke     : OUT STD_LOGIC;								--SDRAM 时钟有效
+      sdram_cs_n    : OUT STD_LOGIC;								--SDRAM 片逿
+      sdram_ras_n   : OUT STD_LOGIC;								--SDRAM 行有敿
+      sdram_cas_n   : OUT STD_LOGIC;								--SDRAM 列有敿
+      sdram_we_n    : OUT STD_LOGIC;								--SDRAM 写有敿
+      sdram_ba      : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);		--SDRAM Bank地址
+      sdram_dqm     : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);		--SDRAM 数据掩码
+      sdram_addr    : OUT STD_LOGIC_VECTOR(12 DOWNTO 0);		--SDRAM 地址
+      sdram_data    : INOUT STD_LOGIC_VECTOR(15 DOWNTO 0);	--SDRAM 数据
+      --lcd接口
+		lcd_hs        : OUT STD_LOGIC;								--LCD 行同步信叿
+      lcd_vs        : OUT STD_LOGIC;								--LCD 场同步信叿
+      lcd_de        : OUT STD_LOGIC;								--LCD 数据输入使能
+      lcd_rgb       : INOUT STD_LOGIC_VECTOR(15 DOWNTO 0);	--LCD RGB565颜色数据
+      lcd_bl        : OUT STD_LOGIC;								--LCD 背光控制信号
+      lcd_rst       : OUT STD_LOGIC;								--LCD 复位信号
+      lcd_pclk      : OUT STD_LOGIC;								--LCD 采样时钟
+     
+	  
+		seg_w:out std_logic_vector(5 downto 0);
+		seg_d:out std_logic_vector(7 downto 0)
+		
+	
+	);
+end entity;
+
+architecture behav of top is
+signal pixel_xpos, pixel_ypos, gray_out:std_logic_vector(10 downto 0);
+signal end_pre, data_req, gray_de, lcd_clk, lcd_rst_n, cnn_finish:std_logic;
+signal rgb:std_logic_vector(15 DOWNTO 0);
+signal result:std_logic_vector(3 downto 0);
+signal i, j:std_logic_vector(4 downto 0);
+signal rb:std_logic_vector(15 downto 0);
+
+COMPONENT cnn
+	port(
+		clk:in std_logic;
+		rst_n:in std_logic;
+		data_req:in std_logic;
+		end_pre:in std_logic;
+		data_in:in std_logic_vector(10 downto 0);
+		cnn_finish:out std_logic; --ʶ±ퟶɐźō
+		result:out std_logic_vector(3 downto 0)--ʶ±𽡹û
+	);
+end COMPONENT;
+
+COMPONENT to_gray
+port(
+	gray_clk:in std_logic;			--接lcd驱动时钟(lcd_clk)
+	rst_n:in std_logic;			--复位信号
+
+	gray_de:in std_logic;			--数据输入开始信叿接lcd_de)
+	
+	x:in std_logic_vector(10 downto 0);		--像素点横坐标(pixel_xpos)
+	y:in std_logic_vector(10 downto 0);		--像素点纵坐标(pixel_ypos)
+	rgb_in:in std_logic_vector(15 downto 0);			--rgb颜色数据(lcd_rgb)
+	
+	gray_out:out std_logic_vector(10 downto 0);		--灰度图数捿
+	i:out std_logic_vector(4 downto 0);					--输出像素点横坐标
+	j:buffer std_logic_vector(4 downto 0);				--输出像素点纵坐标
+
+	end_pre:out std_logic;				--数据输出结束信号
+	data_req:out std_logic				--数据输出信号
+	
+	);
+end COMPONENT;
+
+COMPONENT ov7725_rgb565_lcd
+   PORT (
+      sys_clk       : IN STD_LOGIC;									--系统时钟
+      sys_rst_n     : IN STD_LOGIC;									--系统复位，低电平有效
+      --摄像头接叿
+		cam_pclk      : IN STD_LOGIC;									--cmos 数据像素时钟
+      cam_vsync     : IN STD_LOGIC;									--cmos 场同步信叿
+      cam_href      : IN STD_LOGIC;									--cmos 行同步信叿
+      cam_data      : IN STD_LOGIC_VECTOR(7 DOWNTO 0);		--cmos 数据
+      cam_rst_n     : OUT STD_LOGIC;								--cmos 复位信号，低电平有效
+      cam_sgm_ctrl  : OUT STD_LOGIC;								--cmos 时钟选择信号, 1:使用摄像头自带的晶振
+      cam_scl       : OUT STD_LOGIC;								--cmos SCCB_SCL线
+      cam_sda       : INOUT STD_LOGIC;								--cmos SCCB_SDA线
+      --SDRAM接口
+		sdram_clk     : OUT STD_LOGIC;								--SDRAM 时钟
+      sdram_cke     : OUT STD_LOGIC;								--SDRAM 时钟有效
+      sdram_cs_n    : OUT STD_LOGIC;								--SDRAM 片逿
+      sdram_ras_n   : OUT STD_LOGIC;								--SDRAM 行有敿
+      sdram_cas_n   : OUT STD_LOGIC;								--SDRAM 列有敿
+      sdram_we_n    : OUT STD_LOGIC;								--SDRAM 写有敿
+      sdram_ba      : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);		--SDRAM Bank地址
+      sdram_dqm     : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);		--SDRAM 数据掩码
+      sdram_addr    : OUT STD_LOGIC_VECTOR(12 DOWNTO 0);		--SDRAM 地址
+      sdram_data    : INOUT STD_LOGIC_VECTOR(15 DOWNTO 0);	--SDRAM 数据
+      --lcd接口
+		lcd_hs        : OUT STD_LOGIC;								--LCD 行同步信叿
+      lcd_vs        : OUT STD_LOGIC;								--LCD 场同步信叿
+      lcd_de        : OUT STD_LOGIC;								--LCD 数据输入使能
+      lcd_rgb       : INOUT STD_LOGIC_VECTOR(15 DOWNTO 0);	--LCD RGB565颜色数据
+      lcd_bl        : OUT STD_LOGIC;								--LCD 背光控制信号
+      lcd_rst       : OUT STD_LOGIC;								--LCD 复位信号
+      lcd_pclk      : OUT STD_LOGIC;									--LCD 采样时钟
+      
+      pixel_xpos    : OUT STD_LOGIC_VECTOR(10 DOWNTO 0);
+      pixel_ypos    : OUT STD_LOGIC_VECTOR(10 DOWNTO 0);
+		rb:out std_logic_vector(15 downto 0)
+		
+		--seg_w:out std_logic_vector(5 downto 0);
+		--seg_d:out std_logic_vector(7 downto 0)
+		
+   );
+END COMPONENT;
+
+COMPONENT seg
+	port(clk:in std_logic;
+			rst_n:in std_logic;
+			idis_data:in std_logic_vector(3 downto 0);
+			seg_w:out std_logic_vector(5 downto 0);
+			seg_d:out std_logic_vector(7 downto 0)
+			);
+end COMPONENT;
+begin
+lcd_de <= gray_de;
+--lcd_rgb <= rgb;
+lcd_pclk <= lcd_clk;
+lcd_rst <= lcd_rst_n;
+U0:ov7725_rgb565_lcd
+	port map(sys_clk, sys_rst_n, cam_pclk, cam_vsync, cam_href, cam_data, cam_rst_n, cam_sgm_ctrl, cam_scl, cam_sda,
+	sdram_clk, sdram_cke, sdram_cs_n, sdram_ras_n, sdram_cas_n, sdram_we_n, sdram_ba, sdram_dqm, sdram_addr, sdram_data,
+	lcd_hs, lcd_vs, gray_de, lcd_rgb, lcd_bl, lcd_rst_n, lcd_clk,pixel_xpos, pixel_ypos,rb);
+U1:to_gray
+	port map(lcd_clk, lcd_rst_n, gray_de, pixel_xpos, pixel_ypos, rb, gray_out, i, j, end_pre, data_req);
+U2:cnn
+	port map(sys_clk, sys_rst_n, data_req, end_pre, gray_out, cnn_finish, result);
+U3:seg
+	port map(sys_clk, sys_rst_n, result, seg_w, seg_d);
+end behav;

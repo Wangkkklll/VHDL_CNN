@@ -1,0 +1,213 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
+
+entity lcd_rgb_top is
+port(
+	sys_clk,sys_rst_n,sys_init_done:in std_logic;		--系统时钟，复位信号
+	lcd_clk:out std_logic;										--lcd驱动时钟
+	lcd_hs:out std_logic;										--LCD 行同步信号
+	lcd_vs:out std_logic;										--LCD 场同步信号
+	lcd_de:out std_logic;										--LCD 数据输入使能
+	lcd_rgb:inout std_logic_vector(15 downto 0);			--LCD RGB颜色数据
+	lcd_bl:out std_logic;										--LCD 背光控制信号
+	lcd_rst:out std_logic;										--LCD 复位信号
+	lcd_pclk:out std_logic;										--LCD 采样时钟
+	lcd_id:out std_logic_vector(15 downto 0);				--LCD屏ID  
+	out_vsync:out std_logic;									--lcd场信号 
+	pixel_xpos:out std_logic_vector(10 downto 0);		--像素点横坐标
+	pixel_ypos:out std_logic_vector(10 downto 0);		--像素点纵坐标        
+	h_disp:out std_logic_vector(10 downto 0);				--LCD屏水平分辨率
+	v_disp:out std_logic_vector(10 downto 0);				--LCD屏垂直分辨率         
+	data_in:in std_logic_vector(15 downto 0);			--数据输入
+	data_req:out std_logic										--请求数据输入
+);
+end entity;
+
+architecture stru of lcd_rgb_top is
+
+signal lcd_data_w:		std_logic_vector(15 downto 0);         --//像素点数据
+signal data_req_w:		std_logic;										--//请求像素点颜色数据输入
+signal data_req_big:		std_logic;										--//大于640x480分辨率lcd屏的请求信号
+signal data_req_small:	std_logic;										--//小于640x480分辨率lcd屏的请求信号 
+signal lcd_data:			std_logic_vector(15 downto 0);         --//选择屏后的数据
+signal lcd_rgb_565:		std_logic_vector(15 downto 0);         --//输出的16位lcd数据
+signal lcd_rgb_o:			std_logic_vector(15 downto 0);         --//LCD 输出颜色数据
+signal lcd_rgb_i:			std_logic_vector(15 downto 0);         --//LCD 输入颜色数据
+
+
+------------------------------------------------------------------
+   
+   SIGNAL lcd_clk_signal     : STD_LOGIC;
+   SIGNAL lcd_hs_signal      : STD_LOGIC;
+   SIGNAL lcd_vs_signal      : STD_LOGIC;
+   SIGNAL lcd_de_signal      : STD_LOGIC;
+   SIGNAL lcd_bl_signal      : STD_LOGIC;
+   SIGNAL lcd_rst_signal     : STD_LOGIC;
+   SIGNAL lcd_pclk_signal    : STD_LOGIC;
+   SIGNAL lcd_id_signal      : STD_LOGIC_VECTOR(15 DOWNTO 0);
+   SIGNAL out_vsync_signal   : STD_LOGIC;
+   SIGNAL pixel_xpos_signal : STD_LOGIC_VECTOR(10 DOWNTO 0);
+   SIGNAL pixel_ypos_signal : STD_LOGIC_VECTOR(10 DOWNTO 0);
+   SIGNAL h_disp_signal      : STD_LOGIC_VECTOR(10 DOWNTO 0);
+   SIGNAL v_disp_signal     : STD_LOGIC_VECTOR(10 DOWNTO 0);
+-------------------------------------------------------------------	
+
+--时钟分频模块
+component clk_div
+	port(
+		clk,rst_n:in std_logic;
+		lcd_id:in std_logic_vector(15 downto 0);
+		lcd_pclk:out std_logic
+	);
+end component;
+
+--lcd显示模块
+component lcd_display
+	port(
+		lcd_clk:		in std_logic;								--lcd驱动时钟
+		sys_rst_n:	in std_logic;								--复位信号
+		lcd_id:		in std_logic_vector(15 downto 0);	--LCD屏ID
+		
+		pixel_xpos:	in std_logic_vector(10 downto 0);	--像素点横坐标
+		pixel_ypos:	in std_logic_vector(10 downto 0);	--像素点纵坐标 
+		cmos_data:	in std_logic_vector(15 downto 0);	--CMOS传感器像素点数据
+		h_disp:		in std_logic_vector(10 downto 0);	--LCD屏水平分辨率
+		v_disp:		in std_logic_vector(10 downto 0);	--LCD屏垂直分辨率 
+		
+		lcd_data:	out std_logic_vector(15 downto 0);	--LCD像素点数据
+		data_req:	out std_logic								--请求像素点颜色数据输入
+	);
+end component;
+
+--lcd驱动模块
+component lcd_driver
+	port(
+	lcd_clk:in std_logic;		--lcd模块驱动时钟
+	sys_rst_n:in std_logic;		--/复位信号
+	lcd_id:in std_logic_vector(15 downto 0);		--LCD屏ID
+	pixel_data:in std_logic_vector(15 downto 0);		--像素点数据
+	data_req:inout std_logic;		--请求像素点颜色数据输入
+	pixel_xpos:out std_logic_vector(10 downto 0);		--像素点横坐标
+	pixel_ypos:out std_logic_vector(10 downto 0);		--像素点纵坐标
+	h_disp:inout std_logic_vector(10 downto 0);		--LCD屏水平分辨率
+	v_disp:inout std_logic_vector(10 downto 0);		--LCD屏垂直分辨率
+	out_vsync:out std_logic;		--帧复位，高有效
+	
+	--RGB LCD接口
+	lcd_hs:out std_logic;		--LCD 行同步信号
+	lcd_vs:out std_logic;		--LCD 场同步信号
+	lcd_de:out std_logic;		--LCD 数据输入使能
+	lcd_rgb:out std_logic_vector(15 downto 0);		--LCD RGB565颜色数据
+	lcd_bl:out std_logic;		--LCD 背光控制信号
+	lcd_rst:out std_logic;		--LCD 复位信号
+	lcd_pclk:buffer std_logic		--LCD 采样时钟
+	
+	);
+end component;
+
+--读LCD ID模块
+component rd_id
+	port(
+		clk,rst_n:in std_logic;
+		lcd_rgb:in std_logic_vector(15 downto 0);		--RGB LCD像素数据,用于读取ID
+		lcd_id:out std_logic_vector(15 downto 0)		--LCD屏ID
+	);
+end component;
+
+signal sys_rst_and_init_done:std_logic;
+
+
+begin
+----------------------------------------
+   lcd_clk <= lcd_clk_signal;
+   lcd_hs <= lcd_hs_signal;
+   lcd_vs <= lcd_vs_signal;
+   lcd_de <= lcd_de_signal;
+   lcd_bl <= lcd_bl_signal;
+   lcd_rst <= lcd_rst_signal;
+   lcd_pclk <= lcd_pclk_signal;
+   lcd_id <= lcd_id_signal;
+   out_vsync <= out_vsync_signal;
+   pixel_xpos <= pixel_xpos_signal;
+   pixel_ypos <= pixel_ypos_signal;
+   h_disp <= h_disp_signal;
+   v_disp <= v_disp_signal;
+----------------------------------------
+
+--区分大小屏的读请求
+data_req <= data_req_small when lcd_id_signal = "0100001101000010" else
+				data_req_big;
+--区分大小屏的数据
+lcd_data <= data_in when lcd_id_signal = "0100001101000010" else
+				lcd_data_w;
+--将摄像头16bit数据输出
+lcd_rgb_o <= lcd_rgb_565;
+--像素数据方向切换
+lcd_rgb <= lcd_rgb_o when lcd_de_signal = '1' else
+				"ZZZZZZZZZZZZZZZZ";
+lcd_rgb_i <= lcd_rgb;
+
+sys_rst_and_init_done <= sys_rst_n and sys_init_done;
+
+   u_clk_div : clk_div
+      PORT MAP (
+         clk       => sys_clk,
+         rst_n     => sys_rst_n,
+         lcd_id    => lcd_id_signal,
+         lcd_pclk  => lcd_clk_signal
+      );
+   
+   
+   
+   u_rd_id : rd_id
+      PORT MAP (
+         clk      => sys_clk,
+         rst_n    => sys_rst_n,
+         lcd_rgb  => lcd_rgb_i,
+         lcd_id   => lcd_id_signal
+      );
+   
+   
+   
+   u_lcd_driver : lcd_driver
+      PORT MAP (
+         lcd_clk     => lcd_clk_signal,
+         sys_rst_n   => sys_rst_and_init_done,
+         lcd_id      => lcd_id_signal,
+         
+         lcd_hs      => lcd_hs_signal,
+         lcd_vs      => lcd_vs_signal,
+         lcd_de      => lcd_de_signal,
+         lcd_rgb     => lcd_rgb_565,
+         lcd_bl      => lcd_bl_signal,
+         lcd_rst     => lcd_rst_signal,
+         lcd_pclk    => lcd_pclk_signal,
+         
+         pixel_data  => lcd_data,
+         data_req    => data_req_small,
+         out_vsync   => out_vsync_signal,
+         h_disp      => h_disp_signal,
+         v_disp      => v_disp_signal,
+         pixel_xpos  => pixel_xpos_signal,
+         pixel_ypos  => pixel_ypos_signal
+      );
+   
+   
+ 
+   u_lcd_display : lcd_display
+      PORT MAP (
+         lcd_clk     => lcd_clk_signal,
+         sys_rst_n   => sys_rst_and_init_done,
+         lcd_id      => lcd_id_signal,
+         
+         pixel_xpos  => pixel_xpos_signal,
+         pixel_ypos  => pixel_ypos_signal,
+         h_disp      => h_disp_signal,
+         v_disp      => v_disp_signal,
+         cmos_data   => data_in,
+         lcd_data    => lcd_data_w,
+         data_req    => data_req_big
+      );
+
+end stru;

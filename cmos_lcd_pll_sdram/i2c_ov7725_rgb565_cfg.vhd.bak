@@ -1,0 +1,173 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
+
+entity i2c_ov7725_rgb565_cfg is
+port(
+	clk,rst_n:	in std_logic;									--时钟，复位信号（低电平有效）
+	i2c_done:	in std_logic;									--i2c寄存器配置完成信号
+	i2c_exec:	buffer std_logic;								--i2c触发执行信号
+	init_done:	out std_logic;									--初始化完成信号
+	i2c_data:	out std_logic_vector(15 downto 0)		--i2c要配置的地址（高八位）与数据（低八位）
+	
+);
+end entity;
+
+
+architecture behav of i2c_ov7725_rgb565_cfg is
+	constant reg_num:				std_logic_vector(6 downto 0):="1000110";		--总共需要配置的寄存器个数
+	signal 	start_init_cnt:	std_logic_vector(9 downto 0);						--等待延时计数器
+	signal 	init_reg_cnt:		std_logic_vector(6 downto 0);						--寄存器配置个数计数器
+begin
+
+--cam_scl配置成250khz,输入的clk为1Mhz,周期为1us,1023*1us = 1.023ms
+--寄存器延时配置
+process(clk,rst_n)
+begin
+	if(rst_n = '0') then
+		start_init_cnt <= "0000000000";
+	elsif(rising_edge(clk)) then
+		if((init_reg_cnt = "0000001")) then
+			if(i2c_done = '1') then
+				start_init_cnt <= "0000000000";
+			end if;
+		elsif(start_init_cnt < "1111111111") then
+			start_init_cnt <= start_init_cnt + 1;
+		end if;
+	end if;
+end process;
+
+--寄存器配置个数计数
+process(clk,rst_n)
+begin
+	if(rst_n = '0') then
+		init_reg_cnt <= "0000000";
+	elsif(rising_edge(clk)) then
+		if(i2c_exec = '1') then
+			init_reg_cnt <= init_reg_cnt + 1;
+		end if;
+	end if;
+end process;
+
+--i2c触发执行信号
+process(clk,rst_n)
+begin
+	if(rst_n = '0') then
+		i2c_exec <= '0';
+	elsif(rising_edge(clk)) then
+		if(start_init_cnt = "1111111110") then
+			i2c_exec <= '1';
+		--只有刚上电和配置第一个寄存器增加延时
+		elsif(i2c_done = '1' and ((init_reg_cnt > "0000001"  and init_reg_cnt < reg_num)or init_reg_cnt="0000000")) then
+			i2c_exec <= '1';
+		else 
+			i2c_exec <= '0';
+		end if;
+	end if;
+end process;
+
+--初始化完成信号
+process(clk,rst_n)
+begin
+	if(rst_n = '0') then
+		init_done <= '0';
+	elsif(rising_edge(clk)) then
+		if(init_reg_cnt = reg_num and i2c_done='1') then
+			init_done <= '1';
+		end if;
+	end if;
+end process;
+
+--配置寄存器地址与数据
+process(clk,rst_n)
+begin
+	if(rst_n = '0') then
+		i2c_data <= "0000000000000000";
+	elsif(rising_edge(clk)) then
+		case(init_reg_cnt) is
+			 --先对寄存器进行软件复位，使寄存器恢复初始值
+          --寄存器软件复位后，需要延时1ms才能配置其它寄存器
+            when "0000000" => i2c_data <= "0001001010000000";--{8'h12, 8'h80} --COM7 BIT[7]:复位所有的寄存器
+            when "0000001" => i2c_data <= "0011110100000011";--{8'h3d, 8'h03}; --COM12 模拟过程直流补偿
+            when "0000010" => i2c_data <= "0001010100000000";--{8'h15, 8'h00}; --COM10 href/vsync/pclk/data信号控制
+            when "0000011" => i2c_data <= "0001011100100011";--{8'h17, 8'h23}; --HSTART 水平起始位置
+            when "0000100" => i2c_data <= "0001100010100000";--{8'h18, 8'ha0}; --HSIZE 水平尺寸
+            when "0000101" => i2c_data <= "0001100100000111";--{8'h19, 8'h07}; --VSTRT 垂直起始位置
+            when "0000110" => i2c_data <= "0001101011110000";--{8'h1a, 8'hf0}; --VSIZE 垂直尺寸            
+            when "0000111" => i2c_data <= "0011001000000000";--{8'h32, 8'h00}; --HREF 图像开始和尺寸控制，控制低位
+            when "0001000" => i2c_data <= "0010100110100000";--{8'h29, 8'ha0}; --HOutSize 水平输出尺寸
+            when "0001001" => i2c_data <= "0010101000000000";--{8'h2a, 8'h00}; --EXHCH 虚拟像素MSB
+            when "0001010" => i2c_data <= "0010101100000000";--{8'h2b, 8'h00}; --EXHCL 虚拟像素LSB
+            when "0001011" => i2c_data <= "0010110011110000";--{8'h2c, 8'hf0}; --VOutSize 垂直输出尺寸
+            when "0001100" => i2c_data <= "0000110101000001";--{8'h0d, 8'h41}; --COM4 PLL倍频设置(multiplier)                                              
+            when "0001101" => i2c_data <= "0001000100000000";--{8'h11, 8'h00}; --CLKRC 内部时钟配置                                                 
+            when "0001110" => i2c_data <= "0001001000000110";--{8'h12, 8'h06}; --COM7 输出VGA RGB565格式                                     
+            when "0001111" => i2c_data <= "0000110000010000";--{8'h0c, 8'h10}; --COM3 Bit[0]: 0:图像数据 1:彩条测试
+            --DSP 控制
+            when "0010000" => i2c_data <= "0100001001111111";--{8'h42, 8'h7f}; --TGT_B 黑电平校准蓝色通道目标值
+            when "0010001" => i2c_data <= "0100110100001001";--{8'h4d, 8'h09}; --FixGain 模拟增益放大器
+            when "0010010" => i2c_data <= "0110001111110000";--{8'h63, 8'hf0}; --AWB_Ctrl0 自动白平衡控制字节0
+            when "0010011" => i2c_data <= "0110010011111111";--{8'h64, 8'hff}; --DSP_Ctrl1 DSP控制字节1
+            when "0010100" => i2c_data <= "0110010100000000";--{8'h65, 8'h00}; --DSP_Ctrl2 DSP控制字节2
+            when "0010101" => i2c_data <= "0110011000000000";--{8'h66, 8'h00}; --DSP_Ctrl3 DSP控制字节3
+            when "0010110" => i2c_data <= "0110011100000000";--{8'h67, 8'h00}; --DSP_Ctrl4 DSP控制字节4    
+            --AGC AEC AWB        
+            --COM8 Bit[2]:自动增益使能 Bit[1]:自动白平衡使能 Bit[0]:自动曝光功能
+            when "0010111" => i2c_data <= "0001001111111111";--{8'h13, 8'hff}; --COM8 
+            when "0011000" => i2c_data <= "0000111111000101";--{8'h0f, 8'hc5}; --COM6
+            when "0011001" => i2c_data <= "0001010000010001";--{8'h14, 8'h11};  
+            when "0011010" => i2c_data <= "0010001010011000";--{8'h22, 8'h98}; 
+            when "0011011" => i2c_data <= "0010001100000011";--{8'h23, 8'h03};  
+            when "0011100" => i2c_data <= "0010010001000000";--{8'h24, 8'h40}; 
+            when "0011101" => i2c_data <= "0010010100110000";--{8'h25, 8'h30};  
+            when "0011110" => i2c_data <= "0010011010100001";--{8'h26, 8'ha1};      
+            when "0011111" => i2c_data <= "0110101110101010";--{8'h6b, 8'haa}; 
+            when "0100000" => i2c_data <= "0001001111111111";--{8'h13, 8'hff};  
+            --matrix sharpness brightness contrast UV
+            when "0100001" => i2c_data <= "1001000000001010";--{8'h90, 8'h0a}; --EDGE1 边缘增强控制1
+            --DNSOff 降噪阈值下限,仅在自动模式下有效
+            when "0100010" => i2c_data <= "1001000100000001";--{8'h91, 8'h01}; --DNSOff 
+            when "0100011" => i2c_data <= "1001001000000001";--{8'h92, 8'h01}; --EDGE2 锐度(边缘增强)强度上限
+            when "0100100" => i2c_data <= "1001001100000001";--{8'h93, 8'h01}; --EDGE3 锐度(边缘增强)强度下限
+            when "0100101" => i2c_data <= "1001010001011111";--{8'h94, 8'h5f}; --MTX1 矩阵系数1
+            when "0100110" => i2c_data <= "1001010101010011";--{8'h95, 8'h53}; --MTX1 矩阵系数2
+            when "0100111" => i2c_data <= "1001011000010001";--{8'h96, 8'h11}; --MTX1 矩阵系数3
+            when "0101000" => i2c_data <= "1001011100011010";--{8'h97, 8'h1a}; --MTX1 矩阵系数4
+            when "0101001" => i2c_data <= "1001100000111101";--{8'h98, 8'h3d}; --MTX1 矩阵系数5
+            when "0101010" => i2c_data <= "1001100101011010";--{8'h99, 8'h5a}; --MTX1 矩阵系数6
+            when "0101011" => i2c_data <= "1001101000011110";--{8'h9a, 8'h1e}; --MTX_Ctrl 矩阵控制
+            when "0101100" => i2c_data <= "1001101100111111";--{8'h9b, 8'h3f}; --BRIGHT 亮度
+            when "0101101" => i2c_data <= "1001110000100101";--{8'h9c, 8'h25}; --CNST 对比度            
+            when "0101110" => i2c_data <= "1001111010000001";--{8'h9e, 8'h81}; 
+            when "0101111" => i2c_data <= "1010011000000110";--{8'ha6, 8'h06}; --SDE 特殊数字效果控制
+            when "0110000" => i2c_data <= "1010011101100101";--{8'ha7, 8'h65}; --USAT "U"饱和增益
+            when "0110001" => i2c_data <= "1010100001100101";--{8'ha8, 8'h65}; --VSAT "V"饱和增益            
+            when "0110010" => i2c_data <= "1010100110000000";--{8'ha9, 8'h80}; --VSAT "V"饱和增益   
+            when "0110011" => i2c_data <= "1010101010000000";--{8'haa, 8'h80}; --VSAT "V"饱和增益
+            --伽马控制 
+            when "0110100" => i2c_data <= "0111111000001100";--{8'h7e, 8'h0c}; 
+            when "0110101" => i2c_data <= "0111111100010110";--{8'h7f, 8'h16}; 
+            when "0110110" => i2c_data <= "1000000000101010";--{8'h80, 8'h2a}; 
+            when "0110111" => i2c_data <= "1000000101001110";--{8'h81, 8'h4e}; 
+            when "0111000" => i2c_data <= "1000001001100001";--{8'h82, 8'h61}; 
+            when "0111001" => i2c_data <= "1000001101101111";--{8'h83, 8'h6f}; 
+            when "0111010" => i2c_data <= "1000010001111011";--{8'h84, 8'h7b}; 
+            when "0111011" => i2c_data <= "1000010110000110";--{8'h85, 8'h86};   
+            when "0111100" => i2c_data <= "1000011010001110";--{8'h86, 8'h8e}; 
+            when "0111101" => i2c_data <= "1000011110010111";--{8'h87, 8'h97}; 
+            when "0111110" => i2c_data <= "1000100010100100";--{8'h88, 8'ha4}; 
+            when "0111111" => i2c_data <= "1000100110101111";--{8'h89, 8'haf}; 
+            when "1000000" => i2c_data <= "1000101011000101";--{8'h8a, 8'hc5}; 
+            when "1000001" => i2c_data <= "1000101111010111";--{8'h8b, 8'hd7}; 
+            when "1000010" => i2c_data <= "1000110011101000";--{8'h8c, 8'he8}; 
+            when "1000011" => i2c_data <= "1000110100100000";--{8'h8d, 8'h20};             
+            when "1000100" => i2c_data <= "0000111001100101";--{8'h0e, 8'h65}; --COM5
+            when "1000101" => i2c_data <= "0000100100000000";--{8'h09, 8'h00}; --COM2  Bit[1:0] 输出电流驱动能力
+            --只读存储器,防止在case中没有列举的情况，之前的寄存器被重复改写
+            when others => i2c_data <=	"0001110001111111";--{8'h1C, 8'h7F}; --MIDH 制造商ID 高8位
+			end case;
+	end if;
+end process;
+
+end behav;
+			

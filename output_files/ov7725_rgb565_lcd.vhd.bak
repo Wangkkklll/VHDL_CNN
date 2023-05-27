@@ -1,0 +1,409 @@
+LIBRARY ieee;
+   USE ieee.std_logic_1164.all;
+
+ENTITY ov7725_rgb565_lcd IS
+   PORT (
+      sys_clk       : IN STD_LOGIC;									--系统时钟
+      sys_rst_n     : IN STD_LOGIC;									--系统复位，低电平有效
+      --摄像头接口
+		cam_pclk      : IN STD_LOGIC;									--cmos 数据像素时钟
+      cam_vsync     : IN STD_LOGIC;									--cmos 场同步信号
+      cam_href      : IN STD_LOGIC;									--cmos 行同步信号
+      cam_data      : IN STD_LOGIC_VECTOR(7 DOWNTO 0);		--cmos 数据
+      cam_rst_n     : OUT STD_LOGIC;								--cmos 复位信号，低电平有效
+      cam_sgm_ctrl  : OUT STD_LOGIC;								--cmos 时钟选择信号, 1:使用摄像头自带的晶振
+      cam_scl       : OUT STD_LOGIC;								--cmos SCCB_SCL线
+      cam_sda       : INOUT STD_LOGIC;								--cmos SCCB_SDA线
+      --SDRAM接口
+		sdram_clk     : OUT STD_LOGIC;								--SDRAM 时钟
+      sdram_cke     : OUT STD_LOGIC;								--SDRAM 时钟有效
+      sdram_cs_n    : OUT STD_LOGIC;								--SDRAM 片选
+      sdram_ras_n   : OUT STD_LOGIC;								--SDRAM 行有效
+      sdram_cas_n   : OUT STD_LOGIC;								--SDRAM 列有效
+      sdram_we_n    : OUT STD_LOGIC;								--SDRAM 写有效
+      sdram_ba      : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);		--SDRAM Bank地址
+      sdram_dqm     : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);		--SDRAM 数据掩码
+      sdram_addr    : OUT STD_LOGIC_VECTOR(12 DOWNTO 0);		--SDRAM 地址
+      sdram_data    : INOUT STD_LOGIC_VECTOR(15 DOWNTO 0);	--SDRAM 数据
+      --lcd接口
+		lcd_hs        : OUT STD_LOGIC;								--LCD 行同步信号
+      lcd_vs        : OUT STD_LOGIC;								--LCD 场同步信号
+      lcd_de        : OUT STD_LOGIC;								--LCD 数据输入使能
+      lcd_rgb       : INOUT STD_LOGIC_VECTOR(15 DOWNTO 0);	--LCD RGB565颜色数据
+      lcd_bl        : OUT STD_LOGIC;								--LCD 背光控制信号
+      lcd_rst       : OUT STD_LOGIC;								--LCD 复位信号
+      lcd_pclk      : OUT STD_LOGIC;									--LCD 采样时钟
+      
+      pixel_xpos    : OUT STD_LOGIC_VECTOR(10 DOWNTO 0);
+      pixel_ypos    : OUT STD_LOGIC_VECTOR(10 DOWNTO 0);
+		
+		seg_w:out std_logic_vector(5 downto 0);
+		seg_d:out std_logic_vector(7 downto 0)
+		
+   );
+END ov7725_rgb565_lcd;
+
+ARCHITECTURE structure OF ov7725_rgb565_lcd IS
+
+	
+
+
+	COMPONENT pll_clk IS
+	PORT(
+		areset		: IN STD_LOGIC  := '0';
+		inclk0		: IN STD_LOGIC  := '0';
+		c0		: OUT STD_LOGIC ;
+		c1		: OUT STD_LOGIC ;
+		c2		: OUT STD_LOGIC ;
+		locked		: OUT STD_LOGIC 
+	);
+	END COMPONENT;
+	
+	COMPONENT cmos_data_top IS
+	PORT (
+		rst_n             : IN STD_LOGIC;						--复位信号
+      lcd_id            : IN STD_LOGIC_VECTOR(15 DOWNTO 0); --LCD屏的ID号
+      h_disp            : IN STD_LOGIC_VECTOR(10 DOWNTO 0); --LCD屏水平分辨率
+      v_disp            : IN STD_LOGIC_VECTOR(10 DOWNTO 0); --LCD屏垂直分辨率
+      --摄像头接口
+      cam_pclk          : IN STD_LOGIC;						--cmos 数据像素时钟
+      cam_vsync         : IN STD_LOGIC;						--cmos 场同步信号
+      cam_href          : IN STD_LOGIC;						--cmos 行同步信号
+      cam_data          : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
+      --用户接口
+      h_pixel           : OUT STD_LOGIC_VECTOR(10 DOWNTO 0);--存入SDRAM的水平分辨率
+      v_pixel           : OUT STD_LOGIC_VECTOR(10 DOWNTO 0);--存入SDRAM的垂直分辨率
+      sdram_addr_max    : OUT STD_LOGIC_VECTOR(27 DOWNTO 0);--存入SDRAM的最大读写地址
+      cmos_frame_vsync  : OUT STD_LOGIC;					--帧有效信号
+      cmos_frame_href   : OUT STD_LOGIC;					--行有效信号
+      cmos_frame_valid  : OUT STD_LOGIC;					--数据有效使能信号
+      cmos_frame_data   : OUT STD_LOGIC_VECTOR(15 DOWNTO 0) --有效数据
+   );
+	END COMPONENT;
+	
+	COMPONENT i2c_dri IS
+	--GENERIC (
+	--	SLAVE_ADDR	: STD_LOGIC_VECTOR(6 DOWNTO 0):= "0100001";							--OV7725的器件地址7'h21
+		--BIT_CTRL		: STD_LOGIC := '0';															--OV7725的字节地址为8位  0:8位 1:16位
+	--	CLK_FREQ		: STD_LOGIC_VECTOR(25 DOWNTO 0):= "10111110101111000010000000";--i2c_dri模块的驱动时钟频率 50MHz
+	--	I2C_FREQ		: STD_LOGIC_VECTOR(17 DOWNTO 0):= "111101000010010000"			--I2C的SCL时钟频率,不超过400KHz
+--	);
+	port(
+		clk,rst_n:	in 	std_logic;
+		--i2c interface    
+		i2c_exec:	in 	std_logic;							--I2C触发执行信号
+		bit_ctrl:	in 	std_logic;							--字地址位控制(16b/8b)
+		i2c_rh_wl:	in 	std_logic;							--I2C读写控制信号
+		i2c_addr:	in 	std_logic_vector(15 downto 0);--I2C器件内地址
+		i2c_data_w:	in 	std_logic_vector(7 downto 0);	--I2C要写的数据
+		i2c_data_r:	out 	std_logic_vector(7 downto 0);	--I2C读出的数据
+		i2c_done:	out 	std_logic;							--I2C一次操作完成
+		i2c_ack:		out 	std_logic;							--I2C应答标志 0:应答 1:未应答
+		scl:			out 	std_logic;							--I2C的SCL时钟信号
+		sda:			inout std_logic;							--I2C的SDA信号
+		--user interface--驱动I2C操作的驱动时钟
+		dri_clk:		buffer 	std_logic							
+	);
+	END COMPONENT;
+	
+	COMPONENT i2c_ov7725_rgb565_cfg IS
+	port(
+	clk,rst_n:	in std_logic;									--时钟，复位信号（低电平有效）
+	i2c_done:	in std_logic;									--i2c寄存器配置完成信号
+	i2c_exec:	buffer std_logic;								--i2c触发执行信号
+	init_done:	out std_logic;									--初始化完成信号
+	i2c_data:	out std_logic_vector(15 downto 0)		--i2c要配置的地址（高八位）与数据（低八位）
+	);
+	END COMPONENT;
+	
+   COMPONENT lcd_rgb_top IS
+      PORT (
+         sys_clk       : IN STD_LOGIC;
+         sys_rst_n     : IN STD_LOGIC;
+         sys_init_done : IN STD_LOGIC;
+         lcd_clk       : OUT STD_LOGIC;
+         lcd_hs        : OUT STD_LOGIC;
+         lcd_vs        : OUT STD_LOGIC;
+         lcd_de        : OUT STD_LOGIC;
+         lcd_rgb       : INOUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+         lcd_bl        : OUT STD_LOGIC;
+         lcd_rst       : OUT STD_LOGIC;
+         lcd_pclk      : OUT STD_LOGIC;
+         lcd_id        : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+         out_vsync     : OUT STD_LOGIC;
+         pixel_xpos    : OUT STD_LOGIC_VECTOR(10 DOWNTO 0);
+         pixel_ypos    : OUT STD_LOGIC_VECTOR(10 DOWNTO 0);
+         h_disp        : OUT STD_LOGIC_VECTOR(10 DOWNTO 0);
+         v_disp        : OUT STD_LOGIC_VECTOR(10 DOWNTO 0);
+         data_in       : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+         data_req      : OUT STD_LOGIC
+      );
+   END COMPONENT;
+	
+   COMPONENT sdram_top IS
+      PORT (
+         ref_clk       : IN STD_LOGIC;
+         out_clk       : IN STD_LOGIC;
+         rst_n         : IN STD_LOGIC;
+         wr_clk        : IN STD_LOGIC;
+         wr_en         : IN STD_LOGIC;
+         wr_data       : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+         wr_min_addr   : IN STD_LOGIC_VECTOR(23 DOWNTO 0);
+         wr_max_addr   : IN STD_LOGIC_VECTOR(23 DOWNTO 0);
+         wr_len        : IN STD_LOGIC_VECTOR(9 DOWNTO 0);
+         wr_load       : IN STD_LOGIC;
+         rd_clk        : IN STD_LOGIC;
+         rd_en         : IN STD_LOGIC;
+         rd_data       : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+         rd_min_addr   : IN STD_LOGIC_VECTOR(23 DOWNTO 0);
+         rd_max_addr   : IN STD_LOGIC_VECTOR(23 DOWNTO 0);
+         rd_len        : IN STD_LOGIC_VECTOR(9 DOWNTO 0);
+         rd_load       : IN STD_LOGIC;
+         sdram_read_valid : IN STD_LOGIC;
+         sdram_pingpang_en : IN STD_LOGIC;
+         sdram_init_done : OUT STD_LOGIC;
+         sdram_clk     : OUT STD_LOGIC;
+         sdram_cke     : OUT STD_LOGIC;
+         sdram_cs_n    : OUT STD_LOGIC;
+         sdram_ras_n   : OUT STD_LOGIC;
+         sdram_cas_n   : OUT STD_LOGIC;
+         sdram_we_n    : OUT STD_LOGIC;
+         sdram_ba      : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
+         sdram_addr    : OUT STD_LOGIC_VECTOR(12 DOWNTO 0);
+         sdram_data    : INOUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+         sdram_dqm     : OUT STD_LOGIC_VECTOR(1 DOWNTO 0)
+      );
+   END COMPONENT;
+   
+	component seg_top is
+	port(
+	clk:in std_logic;
+	rst_n:in std_logic;
+	seg_w:out std_logic_vector(5 downto 0);
+	seg_d:out std_logic_vector(7 downto 0)
+	);
+end component;
+   
+
+	
+   SIGNAL clk_100m            : STD_LOGIC;							--100mhz时钟,SDRAM操作时钟
+   SIGNAL clk_100m_shift      : STD_LOGIC;							--100mhz时钟,SDRAM相位偏移时钟
+   SIGNAL clk_50m             : STD_LOGIC;							--50mhz时钟,提供给lcd驱动时钟
+   SIGNAL locked              : STD_LOGIC;
+   SIGNAL rst_n               : STD_LOGIC;
+   SIGNAL i2c_exec            : STD_LOGIC;							--50mhz时钟,提供给lcd驱动时钟
+   SIGNAL i2c_data            : STD_LOGIC_VECTOR(15 DOWNTO 0);	--I2C要配置的地址与数据(高8位地址,低8位数据)
+   SIGNAL cam_init_done       : STD_LOGIC;							--摄像头初始化完成
+   SIGNAL i2c_done            : STD_LOGIC;							--I2C寄存器配置完成信号
+   SIGNAL i2c_dri_clk         : STD_LOGIC;							--I2C操作时钟
+   SIGNAL wr_en               : STD_LOGIC;							--sdram_ctrl模块写使能
+   SIGNAL wr_data             : STD_LOGIC_VECTOR(15 DOWNTO 0);	--sdram_ctrl模块写数据
+   SIGNAL rd_en               : STD_LOGIC;							--sdram_ctrl模块读使能
+   SIGNAL sdram_init_done     : STD_LOGIC;							--SDRAM初始化完成
+   SIGNAL rdata_req           : STD_LOGIC;							--SDRAM控制器模块读使能
+   SIGNAL rd_data             : STD_LOGIC_VECTOR(15 DOWNTO 0);	--SDRAM控制器模块读数据
+   SIGNAL cmos_frame_valid    : STD_LOGIC;							--数据有效使能信号
+   SIGNAL init_calib_complete : STD_LOGIC;							--SDRAM初始化完成init_calib_complete
+   SIGNAL sys_init_done       : STD_LOGIC;							--系统初始化完成(SDRAM初始化+摄像头初始化)
+   SIGNAL clk_200m            : STD_LOGIC;							--SDRAM参考时钟
+   SIGNAL cmos_frame_vsync    : STD_LOGIC;							--输出帧有效场同步信号
+   SIGNAL cmos_frame_href     : STD_LOGIC;							--输出帧有效行同步信号 
+   SIGNAL wr_bust_len         : STD_LOGIC_VECTOR(7 DOWNTO 0);	--从SDRAM中读数据时的突发长度
+   SIGNAL pixel_xpos_w        : STD_LOGIC_VECTOR(9 DOWNTO 0);	--像素点横坐标
+   SIGNAL pixel_ypos_w        : STD_LOGIC_VECTOR(9 DOWNTO 0);	--像素点纵坐标   
+   SIGNAL lcd_clk             : STD_LOGIC;							--分频产生的LCD 采样时钟
+   SIGNAL h_disp              : STD_LOGIC_VECTOR(10 DOWNTO 0);	--LCD屏水平分辨率
+   SIGNAL v_disp              : STD_LOGIC_VECTOR(10 DOWNTO 0);	--LCD屏垂直分辨率
+   SIGNAL h_pixel             : STD_LOGIC_VECTOR(10 DOWNTO 0);	--存入SDRAM的水平分辨率
+   SIGNAL v_pixel             : STD_LOGIC_VECTOR(10 DOWNTO 0);	--存入SDRAM的屏垂直分辨率
+   SIGNAL lcd_id              : STD_LOGIC_VECTOR(15 DOWNTO 0);	--LCD屏的ID号
+   SIGNAL sdram_addr_max      : STD_LOGIC_VECTOR(27 DOWNTO 0);	--存入SDRAM的最大读写地址
+   
+   SIGNAL rd_vsync            : STD_LOGIC;
+   
+   SIGNAL sig1 : STD_LOGIC;
+   SIGNAL sig2 : STD_LOGIC;
+   SIGNAL sig3 : STD_LOGIC;
+   
+   SIGNAL cam_scl_signal       : STD_LOGIC;
+   SIGNAL sdram_clk_signal    : STD_LOGIC;
+   SIGNAL sdram_cke_signal    : STD_LOGIC;
+   SIGNAL sdram_cs_n_signal   : STD_LOGIC;
+   SIGNAL sdram_ras_n_signal  : STD_LOGIC;
+   SIGNAL sdram_cas_n_signal   : STD_LOGIC;
+   SIGNAL sdram_we_n_signal   : STD_LOGIC;
+   SIGNAL sdram_ba_signal      : STD_LOGIC_VECTOR(1 DOWNTO 0);
+   SIGNAL sdram_dqm_signal    : STD_LOGIC_VECTOR(1 DOWNTO 0);
+   SIGNAL sdram_addr_signal    : STD_LOGIC_VECTOR(12 DOWNTO 0);
+   SIGNAL lcd_hs_signal        : STD_LOGIC;
+   SIGNAL lcd_vs_signal        : STD_LOGIC;
+   SIGNAL lcd_de_signal        : STD_LOGIC;
+   SIGNAL lcd_bl_signal        : STD_LOGIC;
+   SIGNAL lcd_rst_signal       : STD_LOGIC;
+   SIGNAL lcd_pclk_signal      : STD_LOGIC;
+BEGIN
+   cam_scl <= cam_scl_signal;
+   sdram_clk <= sdram_clk_signal;
+   sdram_cke <= sdram_cke_signal;
+   sdram_cs_n <= sdram_cs_n_signal;
+   sdram_ras_n <= sdram_ras_n_signal;
+   sdram_cas_n <= sdram_cas_n_signal;
+   sdram_we_n <= sdram_we_n_signal;
+   sdram_ba <= sdram_ba_signal;
+   sdram_dqm <= sdram_dqm_signal;
+   sdram_addr <= sdram_addr_signal;
+   lcd_hs <= lcd_hs_signal;
+   lcd_vs <= lcd_vs_signal;
+   lcd_de <= lcd_de_signal;
+   lcd_bl <= lcd_bl_signal;
+   lcd_rst <= lcd_rst_signal;
+   lcd_pclk <= lcd_pclk_signal;
+	
+   rst_n <= sys_rst_n AND locked;
+	--系统初始化完成：SDRAM和摄像头都初始化完成
+	--避免了在SDRAM初始化过程中向里面写入数据
+   sys_init_done <= sdram_init_done AND cam_init_done;
+	--不对摄像头硬件复位,固定高电平
+   cam_rst_n <= '1';
+	--cmos 时钟选择信号, 1:使用摄像头自带的晶振
+   cam_sgm_ctrl <= '1';
+   
+   --锁相环
+   sig1 <= NOT(sys_rst_n);
+   u_pll_clk : pll_clk
+      PORT MAP (
+         areset  => sig1,
+         inclk0  => sys_clk,
+         c0      => clk_100m,
+         c1      => clk_100m_shift,
+         c2      => clk_50m,
+         locked  => locked
+      );
+   
+   --I2C配置模块
+   u_i2c_cfg : i2c_ov7725_rgb565_cfg
+      PORT MAP (
+         clk        => i2c_dri_clk,
+         rst_n      => rst_n,
+         i2c_done   => i2c_done,
+         i2c_exec   => i2c_exec,
+         i2c_data   => i2c_data,
+         init_done  => cam_init_done
+      );
+   
+   --I2C驱动模块
+   u_i2c_dri : i2c_dri
+     -- GENERIC MAP (										--参数传递
+       --  slave_addr  => "0100001",
+        -- clk_freq    => "10111110101111000010000000",
+       --  i2c_freq    => "111101000010010000"
+    -- )
+      PORT MAP (
+         clk         => clk_50m,
+         rst_n       => rst_n,
+         --i2c interface
+			i2c_exec    => i2c_exec,
+         bit_ctrl    => '0',
+         i2c_rh_wl   => '0',							--固定为0，只用到了IIC驱动的写操作   
+         i2c_addr    => ("00000000" & i2c_data(15 DOWNTO 8)),
+         i2c_data_w  => i2c_data(7 DOWNTO 0),
+         i2c_data_r  => OPEN,
+         i2c_done    => i2c_done,
+         scl         => cam_scl_signal,
+         sda         => cam_sda,
+         --user interface
+			dri_clk     => i2c_dri_clk					--I2C操作时钟
+      );
+   
+   --CMOS图像数据采集模块
+   sig2 <= rst_n AND sys_init_done;
+   u_cmos_data_top : cmos_data_top
+      PORT MAP (
+         rst_n             => sig2,					--系统初始化完成之后再开始采集数据
+         cam_pclk          => cam_pclk,
+         cam_vsync         => cam_vsync,
+         cam_href          => cam_href,
+         cam_data          => cam_data,
+         lcd_id            => lcd_id,
+         h_disp            => h_disp,
+         v_disp            => v_disp,
+         h_pixel           => h_pixel,
+         v_pixel           => v_pixel,
+         sdram_addr_max    => sdram_addr_max,
+         cmos_frame_vsync  => cmos_frame_vsync,
+         cmos_frame_href   => cmos_frame_href,
+         cmos_frame_valid  => cmos_frame_valid,	--数据有效使能信号
+         cmos_frame_data   => wr_data				--有效数据 
+      );
+   
+   --SDRAM 控制器顶层模块,封装成FIFO接口
+	--SDRAM 控制器地址组成: {bank_addr[1:0],row_addr[12:0],col_addr[8:0]}
+   sig3 <= NOT(rst_n);
+   u_sdram_top : sdram_top
+      PORT MAP (
+         ref_clk            => clk_100m,
+         out_clk            => clk_100m_shift,
+         rst_n              => rst_n,
+         --用户写端口
+			wr_clk             => cam_pclk,
+         wr_en              => cmos_frame_valid,
+         wr_data            => wr_data,
+         wr_min_addr        => "000000000000000000000000",
+         wr_max_addr        => sdram_addr_max(23 DOWNTO 0),
+         wr_len             => "1000000000",
+         wr_load            => sig3,
+         --用户读端口  
+			rd_clk             => lcd_clk,
+         rd_en              => rdata_req,
+         rd_data            => rd_data,
+         rd_min_addr        => "000000000000000000000000",
+         rd_max_addr        => sdram_addr_max(23 DOWNTO 0),
+         rd_len             => "1000000000",
+         rd_load            => sig3,
+         --用户控制端口 
+			sdram_read_valid   => '1',
+         sdram_pingpang_en  => '1',
+         sdram_init_done    => sdram_init_done,
+         --SDRAM 芯片接口 
+			sdram_clk          => sdram_clk_signal,
+         sdram_cke          => sdram_cke_signal,
+         sdram_cs_n         => sdram_cs_n_signal,
+         sdram_ras_n        => sdram_ras_n_signal,
+         sdram_cas_n        => sdram_cas_n_signal,
+         sdram_we_n         => sdram_we_n_signal,
+         sdram_ba           => sdram_ba_signal,
+         sdram_addr         => sdram_addr_signal,
+         sdram_data         => sdram_data,
+         sdram_dqm          => sdram_dqm_signal
+      );
+   
+   --LCD顶层模块
+   u_lcd_rgb_top : lcd_rgb_top
+      PORT MAP (
+         sys_clk        => clk_50m,
+         sys_rst_n      => rst_n,
+         sys_init_done  => sys_init_done,
+         --lcd接口
+			lcd_id         => lcd_id,
+         lcd_hs         => lcd_hs_signal,
+         lcd_vs         => lcd_vs_signal,
+         lcd_de         => lcd_de_signal,
+         lcd_rgb        => lcd_rgb,
+         lcd_bl         => lcd_bl_signal,
+         lcd_rst        => lcd_rst_signal,
+         lcd_pclk       => lcd_pclk_signal,
+         lcd_clk        => lcd_clk,
+         out_vsync      => rd_vsync,
+         h_disp         => h_disp,
+         v_disp         => v_disp,
+         pixel_xpos     => pixel_xpos,
+         pixel_ypos     => pixel_ypos,
+         data_in        => rd_data,
+         data_req       => rdata_req
+      );
+	
+	u2:seg_top port map(sys_clk,sys_rst_n,seg_w,seg_d);
+   
+END structure;
+
+

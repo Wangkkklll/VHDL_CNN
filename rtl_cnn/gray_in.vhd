@@ -1,0 +1,47 @@
+----------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------
+library ieee;
+use ieee.std_logic_1164.all;
+USE ieee.std_logic_arith.ALL;
+USE ieee.std_logic_signed.ALL;
+
+entity gray_in is
+	port(
+	clk:in std_logic;
+	rst_n:in std_logic;
+	data_req:in std_logic;
+	end_pre:in std_logic;
+	data_in:in std_logic_vector(10 downto 0);
+	gray_ready:out std_logic;
+	gray_en:out std_logic;
+	data_out:out std_logic_vector(7 downto 0);
+	gray_addr:out std_logic_vector(9 downto 0)
+	);
+end entity;
+
+architecture behav of gray_in is
+signal address:std_logic_vector(9 downto 0);
+begin
+process(clk)
+begin
+if rst_n='0' then
+	gray_en <= '0';
+	address <= (others=>'0');
+	gray_ready <= '0';
+elsif rising_edge(clk) then
+	if (address="1100010000")or(end_pre='1') then --"1100010000"784
+		gray_en <= '0';
+		gray_ready <= '1';
+		address <= (others=>'0');
+	elsif (data_req='1') then
+		gray_en <= '1';
+		address <= address + '1';
+		data_out <= data_in(8 downto 1);
+	else 
+		gray_en <= '0';
+		gray_ready <= '0';
+	end if;
+end if;
+end process;
+gray_addr <= address - '1';
+end behav;
