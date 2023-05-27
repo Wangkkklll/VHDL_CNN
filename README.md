@@ -10,9 +10,8 @@ Implementation of CNN network based on VHDL
 Waiting for update  
 
  
-our result: one forward propagation time: <2ms  FPS>500  
+our result: one forward propagation time: <2ms ; FPS>500  
 our report  
-![EB}`Z}I$@CN584L35J4 043](https://github.com/Wangkkklll/VHDL_CNN/assets/71534709/d77b36e7-467c-45e7-9db3-ffffa06f6885)
 
 
 
