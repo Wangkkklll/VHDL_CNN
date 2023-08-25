@@ -47,7 +47,8 @@ rom_weight.vhd:权重读取部分
 使用Quartus Prime 18.0打开项目，将./top/top.vhd设置为顶层文件，编译，然后烧录即可  
 ### 4、硬件资源耗用
 如图所示：  
-![image](https://github.com/Wangkkklll/VHDL_CNN/assets/71534709/4825a9ac-8ad3-455a-9650-7258945259f2)
+![image](https://github.com/Wangkkklll/VHDL_CNN/assets/71534709/4825a9ac-8ad3-455a-9650-7258945259f2)  
+使用的LUT为6670，9bit专用乘法器为4个。
 
 ## FAQ 
 ## Authors
