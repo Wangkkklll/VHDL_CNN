@@ -27,7 +27,7 @@ cd Pytorch_Bnn
 python main_binary.py --model alexnet_binary --epochs 150
 ```
 ### 2、硬件文件配置
-(1) 开发环境为：Quartus (Quartus Prime 18.0) Standard Edition + ModelSim - Intel FPGA Starter Edition 10.5b (Quartus Prime 18.0)
+(1) 开发环境为：Quartus (Quartus Prime 18.0) Standard Edition + ModelSim - Intel FPGA Starter Edition 10.5b (Quartus Prime 18.0)  
 (2) 硬件配置为：ov7725 + EP4CE10F17C8 + Seven-inch RGB display  
 (3) 顶层文件的设置在：./top/top.vhd  
 (4) 仿真文件的设置在: ./simulation/modelsim 其中两个work分别代表时序仿真和逻辑仿真  
