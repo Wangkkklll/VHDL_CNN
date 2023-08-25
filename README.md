@@ -51,6 +51,9 @@ rom_weight.vhd:权重读取部分
 使用的LUT为6670，9bit专用乘法器为4个。
 
 ## FAQ 
+## 项目扩展
+上面的项目是基于纯手写的VHDL完成对CNN的设计，实际上基于HLS的高层次设计能在开发过程中实现更快的速度  
+将上面的网络用HLS进行实现，待更新、、、、、、、、、、、、
 ## Authors
 Wang    eewkl@mail.scut.edu.cn  
 Wu      202030242140@mail.scut.edu.cn
