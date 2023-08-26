@@ -51,6 +51,8 @@ rom_weight.vhd:权重读取部分
 如图所示：  
 ![image](https://github.com/Wangkkklll/VHDL_CNN/assets/71534709/4825a9ac-8ad3-455a-9650-7258945259f2)  
 使用的LUT为6670，9bit专用乘法器为4个。
+## 效果示意图
+![image](https://github.com/Wangkkklll/VHDL_CNN/assets/71534709/3bf6a133-0485-4333-ae19-a05c22e57f5d)
 
 ## FAQ 
 ## 项目扩展
