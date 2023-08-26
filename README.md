@@ -3,7 +3,9 @@
 # VHDL_CNN
 ![license](https://img.shields.io/badge/license-MIT-blue)
 ![build](https://img.shields.io/badge/build-passing-yellowgreen)
-
+# Update
+本项目的扩展基于HLS实现的代码  
+已经开源[在cnn_hls文件夹下](https://github.com/Wangkkklll/VHDL_CNN/tree/main/cnn_hls)
 ## Introduction 
 1、本项目是基于VHDL的卷积神经网络的**RTL**设计，**所有的模块实现均采用手工设计**  
 2、我们验证了设计的时序的准确性，包括使用**软件仿真与硬件仿真的方法**  
@@ -130,7 +132,7 @@ void Linear(ap_uint<8>*In_ddr,ap_uint<8>*W_ddr,ap_uint<8>* Out_ddr );
   
 **整体上的延时比纯RTL设计的要少，主要得益于乒乓buffer和部分展开的高效并行计算**
 ### 代码位置
-开源代码在./cnn_hls文件夹下
+开源代码在[点击跳往HLS代码](https://github.com/Wangkkklll/VHDL_CNN/tree/main/cnn_hls)
 ## Authors
 Wang    eewkl@mail.scut.edu.cn  
 Wu      202030242140@mail.scut.edu.cn
