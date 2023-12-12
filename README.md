@@ -1,8 +1,7 @@
+# <p align="center"> VHDL_CNN🚀</p>
 
+<p align="center"><img src="https://img.shields.io/badge/VHDL CNN-v0.1-red?logo=gitlab&style=for-the-badge"> <img src="https://img.shields.io/badge/license-MIT-blue?logo=Hexo&style=for-the-badge"> </p>
 
-# VHDL_CNN
-![license](https://img.shields.io/badge/license-MIT-blue)
-![build](https://img.shields.io/badge/build-passing-yellowgreen)
 # Update
 本项目的扩展基于HLS实现的代码  
 已经开源[在cnn_hls文件夹下](https://github.com/Wangkkklll/VHDL_CNN/tree/main/cnn_hls)
