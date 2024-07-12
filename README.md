@@ -134,8 +134,7 @@ void Linear(ap_uint<8>*In_ddr,ap_uint<8>*W_ddr,ap_uint<8>* Out_ddr );
 **整体上的延时比纯RTL设计的要少，主要得益于乒乓buffer和部分展开的高效并行计算**
 ### 代码位置
 开源代码在[点击跳往HLS代码](https://github.com/Wangkkklll/VHDL_CNN/tree/main/cnn_hls)
-## Authors
-Wang    eewkl@mail.scut.edu.cn  
-Wu      202030242140@mail.scut.edu.cn
+## Contact us
+kangliwang@stu.pku.edu.cn  
 ## License
 MIT
