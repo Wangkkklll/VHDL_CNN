@@ -23,6 +23,7 @@ ov7725 + EP4CE10F17C8 + Seven-inch RGB display
 
 ## Usage  
 ### 1、BNN模型的训练
+如果BNN模型的训练出现问题，请参考：https://github.com/itayhubara/BinaryNet.pytorch
 ```
 cd Pytorch_Bnn
 python main_binary.py --model alexnet_binary --epochs 150
